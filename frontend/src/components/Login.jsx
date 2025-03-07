@@ -6,9 +6,25 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    // For now, just navigate to the profile page
-    navigate("/profile");
+  const handleLogin = async () => {
+    try {
+      // POST request to Flask backend
+      const response = await axios.post("http://127.0.0.1:5000/login", {
+        email,
+        password
+      });
+
+      if (response.status === 200) {
+
+        navigate("/profile");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setErrorMsg(error.response.data.error || "Login error");
+      } else {
+        setErrorMsg("An unexpected error occurred.");
+      }
+    }
   };
 
   return (
