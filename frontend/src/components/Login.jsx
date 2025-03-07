@@ -31,8 +31,9 @@ const Login = () => {
       <button onClick={handleLogin} style={styles.button}>
         Login
       </button>
-      <button style={styles.linkButton}>Forgot Password?</button>
-      <button style={styles.linkButton}>Sign Up</button>
+      <button onClick={() => navigate("/register")} style={styles.linkButton}>
+        Sign Up
+      </button>
     </div>
   );
 };
