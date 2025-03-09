@@ -88,6 +88,10 @@ const styles = {
     alignItems: "center",
     minHeight: "100vh",
 <<<<<<< Updated upstream:frontend/src/UpdatePassword.jsx
+<<<<<<< Updated upstream:frontend/src/UpdatePassword.jsx
+=======
+    backgroundColor: "#f0f0f0",  // optional global background color
+>>>>>>> Stashed changes:frontend/src/components/UpdatePassword.jsx
 =======
     backgroundColor: "#f0f0f0",  // optional global background color
 >>>>>>> Stashed changes:frontend/src/components/UpdatePassword.jsx
