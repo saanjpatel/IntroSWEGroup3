@@ -5,6 +5,8 @@ import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
+import UpdatePassword from "./UpdatePassword.jsx";
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
