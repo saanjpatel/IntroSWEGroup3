@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -10,16 +11,37 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Toggle confirm password visibility
   const navigate = useNavigate();
 
-  const handleRegister = () => {
-    if (password === confirmPassword) {
-      // For now, just navigate to the login page
-      navigate("/login");
-      setPasswordError(""); // Clear any previous error
-    } else {
-      setPasswordError("Passwords do not match!"); // Set error message
+  const handleRegister = async() => {
+    try {
+        const response = await axios.post("http://127.0.0.1:5000/register", {
+          email,
+          password,
+          confirmPassword
+        });
+        const bool_end_with_ufl = email.endsWith("@ufl.edu")
+        if (password === confirmPassword && bool_end_with_ufl && response.status === 200) {
+          // For now, just navigate to the login page
+          navigate("/login");
+          setPasswordError(""); // Clear any previous error
+        }
+        else if (password !== confirmPassword && !bool_end_with_ufl) {
+          setPasswordError("Passwords do not match and email does not end with @ufl.edu!"); // Set error message
+        }
+        else if (password !== confirmPassword) {
+          setPasswordError("Passwords do not match!"); // Set error message
+        }
+        else if (!bool_end_with_ufl) {
+          setPasswordError("Email does not end with @ufl.edu!"); // Set error message
+        }
+    } catch (error){
+      if (error.response && error.response.data) {
+        setPasswordError(error.response.data.error || "Registration Error")
+      }
+      else {
+        setPasswordError("An unexpected error occurred.")
+      }
     }
   };
-
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>StayFit</h1>
