@@ -89,9 +89,9 @@ def login():
     print("Login failed: credentials do not match.")
     return jsonify({'error': 'Invalid credentials'}), 401
 
-# Forgot Password endpoint
-@app.route('/forgot-password', methods=['POST'])
-def forgot_password():
+# Update Password endpoint
+@app.route('/update-password', methods=['POST'])
+def update_password():
     data = request.get_json()
     email = data.get('email')
     new_password = data.get('new_password')
@@ -125,7 +125,7 @@ def forgot_password():
         return jsonify({'message': 'Password updated successfully'}), 200
 
     except Exception as e:
-        print("Database error during forgot password:", str(e))
+        print("Database error during update password:", str(e))
         return jsonify({'error': str(e)}), 500
 
 @app.route('/')

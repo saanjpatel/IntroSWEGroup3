@@ -1,9 +1,16 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   return (
     <div style={styles.container}>
       <h1>Profile</h1>
+      <p>
+        Update your password?{" "}
+        <Link to="/update-password" style={styles.link}>
+          Reset Password
+        </Link>
+      </p>
     </div>
   );
 };
@@ -16,6 +23,11 @@ const styles = {
     justifyContent: "center",
     height: "100vh",
     backgroundColor: "#f0f0f0",
+  },
+  link: {
+    color: "#646cff", // adjust to your theme's color if needed
+    textDecoration: "none",
+    fontWeight: "bold",
   },
 };
 
