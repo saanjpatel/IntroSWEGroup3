@@ -37,6 +37,10 @@ const UpdatePassword = () => {
     }
   };
 
+  const handleCancel = () => {
+    navigate("/profile");
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.card}>
@@ -44,7 +48,8 @@ const UpdatePassword = () => {
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>
           <div>
-            <label>Email: </label><br />
+            <label>Email: </label>
+            <br />
             <input
               type="email"
               value={email}
@@ -54,7 +59,8 @@ const UpdatePassword = () => {
             />
           </div>
           <div>
-            <label>New Password: </label><br />
+            <label>New Password: </label>
+            <br />
             <input
               type="password"
               value={new_password}
@@ -64,7 +70,8 @@ const UpdatePassword = () => {
             />
           </div>
           <div>
-            <label>Confirm New Password: </label><br />
+            <label>Confirm New Password: </label>
+            <br />
             <input
               type="password"
               value={confirm_password}
@@ -74,7 +81,12 @@ const UpdatePassword = () => {
             />
           </div>
           <br />
-          <button type="submit">Reset Password</button>
+          <button type="submit" style={styles.button}>
+            Reset Password
+          </button>
+          <button type="button" onClick={handleCancel} style={styles.button}>
+            Cancel
+          </button>
         </form>
       </div>
     </div>
@@ -95,6 +107,16 @@ const styles = {
     backgroundColor: "#fff",
     boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
     textAlign: "center",
+  },
+  button: {
+    margin: "10px",
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
   },
 };
 

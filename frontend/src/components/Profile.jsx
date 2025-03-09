@@ -1,4 +1,3 @@
-// src/components/Profile.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -12,6 +11,10 @@ const Profile = () => {
 
   const handleDeleteAccount = () => {
     setShowDeletePopup(true);
+  };
+
+  const handleUpdatePassword = () => {
+    navigate("/update-password");
   };
 
   const confirmDelete = () => {
@@ -28,6 +31,9 @@ const Profile = () => {
       <div style={styles.header}>
         <button onClick={handleLogout} style={styles.logoutButton}>
           Logout
+        </button>
+        <button onClick={handleUpdatePassword} style={styles.updateButton}>
+          Update Password
         </button>
         <button onClick={handleDeleteAccount} style={styles.deleteButton}>
           Delete Account
@@ -79,6 +85,15 @@ const styles = {
     cursor: "pointer",
     fontSize: "1rem",
   },
+  updateButton: {
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#28a745",  // Green color for update password
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
   deleteButton: {
     padding: "10px 20px",
     borderRadius: "5px",
@@ -88,14 +103,6 @@ const styles = {
     cursor: "pointer",
     fontSize: "1rem",
     transition: "background-color 0.3s, color 0.3s",
-    ":hover": {
-      backgroundColor: "#ff4444",
-      color: "#fff",
-    },
-  },
-  deleteButtonHover: {
-    backgroundColor: "#ff4444",
-    color: "#fff",
   },
   popup: {
     position: "fixed",
