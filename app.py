@@ -92,7 +92,11 @@ def login():
 # Update Password endpoint
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 @app.route('/update-password', methods=['POST'])
+=======
+@app.route('/Update-password', methods=['POST'])
+>>>>>>> Stashed changes
 =======
 @app.route('/Update-password', methods=['POST'])
 >>>>>>> Stashed changes
