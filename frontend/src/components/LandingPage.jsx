@@ -27,7 +27,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     height: "100vh",
-    backgroundColor: "#f0f0f0",
+    background: "url('background.jpg') center/cover no-repeat",
   },
   header: {
     position: "absolute",
@@ -35,18 +35,22 @@ const styles = {
     right: "20px",
   },
   title: {
-    fontSize: "3rem",
+    fontSize: "4rem",
+    fontWeight: "bold",
+    color: "#fff",
+    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
+    letterSpacing: "2px",
   },
   linkButton: {
     background: "none",
     border: "none",
-    color: "#007bff",
+    color: "#fff",
     cursor: "pointer",
     fontSize: "1rem",
   },
   separator: {
     margin: "0 10px",
-    color: "#007bff",
+    color: "#fff",
   },
 };
 
