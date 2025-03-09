@@ -9,11 +9,13 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='',
-        password=''
+        user='postgres',
+        password='Google232.',
+        port='5432'
     )
     return conn
-# registration while checking that it ends with @ufl.edu and passwords match
+
+# Registration endpoint – note: adjusted .edu check example
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -23,13 +25,13 @@ def register():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute('SELECT * FROM logs WHERE username = %s', (email, ))
+        cur.execute('SELECT * FROM logs WHERE username = %s', (email,))
         user_entry = cur.fetchone()
-        cur.execute('SELECT * FROM logs WHERE password = %s', (password, ))
+        cur.execute('SELECT * FROM logs WHERE password = %s', (password,))
         password_entry = cur.fetchone()
         cur.close()
         conn.close()
-        if not email.endswith('@ufl.edu') and password != confirmPassword:
+        if (not email.endswith('@ufl.edu')) and (password != confirmPassword):
             print("Passwords do not match and email does not end with @ufl.edu!")
             return jsonify({'error': 'Passwords do not match and email does not end with @ufl.edu!'}), 401
         elif password != confirmPassword:
@@ -41,9 +43,7 @@ def register():
         elif not user_entry and not password_entry:
             conn = get_db_connection()
             cur = conn.cursor()
-            cur.execute('INSERT INTO logs (username, password)'
-                        ' VALUES (%s, %s)'
-                        , (email, password))
+            cur.execute('INSERT INTO logs (username, password) VALUES (%s, %s)', (email, password))
             conn.commit()
             cur.close()
             conn.close()
@@ -62,8 +62,7 @@ def register():
         print("database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-
-# login endpoint without password encryption
+# Login endpoint (no encryption)
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -83,13 +82,51 @@ def login():
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-    # Compare plain text passwords
     if result and result[0] == password:
         print("Login successful")
         return jsonify({'message': 'Login successful'}), 200
 
     print("Login failed: credentials do not match.")
     return jsonify({'error': 'Invalid credentials'}), 401
+
+# Forgot Password endpoint
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+    new_password = data.get('new_password')
+    confirm_password = data.get('confirm_password')
+
+    if not email or not new_password or not confirm_password:
+        return jsonify({'error': 'Missing fields'}), 400
+
+    if new_password != confirm_password:
+        print("New passwords do not match for", email)
+        return jsonify({'error': 'Passwords do not match'}), 401
+
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # Check if user exists
+        cur.execute('SELECT * FROM logs WHERE username = %s', (email,))
+        user_record = cur.fetchone()
+        if not user_record:
+            cur.close()
+            conn.close()
+            print("No user found with email:", email)
+            return jsonify({'error': 'User not found'}), 404
+
+        # Update password for the user
+        cur.execute('UPDATE logs SET password = %s WHERE username = %s', (new_password, email))
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Password successfully updated for:", email)
+        return jsonify({'message': 'Password updated successfully'}), 200
+
+    except Exception as e:
+        print("Database error during forgot password:", str(e))
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/')
 def home():
