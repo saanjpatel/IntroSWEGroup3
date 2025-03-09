@@ -6,7 +6,11 @@ const Profile = () => {
     <div style={styles.container}>
       <h1>Profile</h1>
       <p>
+<<<<<<< Updated upstream:frontend/src/Profile.jsx
         Update your password?{" "}
+=======
+        Forgot your password?{" "}
+>>>>>>> Stashed changes:frontend/src/components/Profile.jsx
         <Link to="/update-password" style={styles.link}>
           Reset Password
         </Link>
@@ -25,7 +29,11 @@ const styles = {
     backgroundColor: "#f0f0f0",
   },
   link: {
+<<<<<<< Updated upstream:frontend/src/Profile.jsx
     color: "#646cff", // adjust to your theme's color if needed
+=======
+    color: "#646cff",
+>>>>>>> Stashed changes:frontend/src/components/Profile.jsx
     textDecoration: "none",
     fontWeight: "bold",
   },
