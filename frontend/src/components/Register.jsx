@@ -20,9 +20,8 @@ const Register = () => {
         });
         const bool_end_with_ufl = email.endsWith("@ufl.edu")
         if (password === confirmPassword && bool_end_with_ufl && response.status === 200) {
-          // For now, just navigate to the login page
           navigate("/login");
-          setPasswordError(""); // Clear any previous error
+          setPasswordError("");
         }
         else if (password !== confirmPassword && !bool_end_with_ufl) {
           setPasswordError("Passwords do not match and email does not end with @ufl.edu!"); // Set error message

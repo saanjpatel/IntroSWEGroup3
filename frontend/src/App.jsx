@@ -3,15 +3,8 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login";
 import Profile from "./Profile";
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-import UpdatePassword from "./components/UpdatePassword.jsx";
-=======
-import UpdatePassword from "./UpdatePassword"; // import the Forgot Password component
->>>>>>> Stashed changes
-=======
-import UpdatePassword from "./UpdatePassword"; // import the Forgot Password component
->>>>>>> Stashed changes
+import UpdatePassword from "./components/UpdatePassword";
+
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
