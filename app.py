@@ -90,7 +90,7 @@ def login():
     return jsonify({'error': 'Invalid credentials'}), 401
 
 # Update Password endpoint
-@app.route('/Update-password', methods=['POST'])
+@app.route('/update-password', methods=['POST'])
 def update_password():
     data = request.get_json()
     email = data.get('email')
