@@ -17,7 +17,7 @@ const Login = () => {
       });
 
       if (response.status === 200) {
-
+        localStorage.setItem('email', email);
         navigate("/profile");
       }
     } catch (error) {
