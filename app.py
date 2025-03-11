@@ -1,16 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 import psycopg2
 from flask_cors import CORS
-
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 app = Flask(__name__)
 CORS(app)
+
 
 def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='postgres',
-        password='Google232.',
+        user='',
+        password='',
         port='5432'
     )
     return conn
@@ -127,6 +128,45 @@ def update_password():
     except Exception as e:
         print("Database error during update password:", str(e))
         return jsonify({'error': str(e)}), 500
+# logout verify backend
+@app.route('/logout', methods=['POST'])
+def logout():
+    try:
+        curr_email = request.get_json()
+        print(curr_email)
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM logs WHERE username = %s', (curr_email['email'],))
+        logged_user = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not logged_user:
+            return jsonify({'error': 'User not found'}), 404
+        else:
+            print("logout successful")
+            return jsonify({'message': 'logout successful'}), 200
+
+    except Exception as e:
+        print("Database error during logout:", str(e))
+        return jsonify({'error': str(e)}), 500
+# delete account backend
+@app.route('/delete', methods=['POST','DELETE'])
+def delete():
+    try:
+        curr_email = request.get_json()
+        print(curr_email)
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM logs WHERE username = %s', (curr_email['email'],))
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Delete successful")
+        return jsonify({'message': 'Delete successful'}), 200
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/')
 def home():
