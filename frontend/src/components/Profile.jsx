@@ -1,14 +1,30 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Profile = () => {
   const navigate = useNavigate();
   const [showDeletePopup, setShowDeletePopup] = useState(false);
+  const [logOutMsg, setLogOutMsg] = useState("");
+  const [deleteMsg, setDeleteMsg] = useState("");
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = async() => {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/logout", {
+        email: localStorage.getItem('email')
+      });
+      if (response.status === 200) {
+        localStorage.removeItem('email')
+        navigate("/login");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setLogOutMsg(error.response.data.error || "Logout error");
+      } else {
+        setLogOutMsg("An unexpected error occurred.");
+      }
+    }
   };
-
   const handleDeleteAccount = () => {
     setShowDeletePopup(true);
   };
@@ -17,9 +33,24 @@ const Profile = () => {
     navigate("/update-password");
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     setShowDeletePopup(false);
-    navigate("/");
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/delete", {
+        email: localStorage.getItem('email')
+      });
+      if (response.status === 200) {
+        localStorage.removeItem('email')
+        navigate("/");
+      }
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setDeleteMsg(error.response.data.error || "Deletion error");
+      } else {
+        setDeleteMsg("An unexpected error occurred.");
+      }
+    }
+
   };
 
   const cancelDelete = () => {
@@ -40,7 +71,7 @@ const Profile = () => {
         </button>
       </div>
       <h1>Profile</h1>
-
+      <h1>hello {localStorage.getItem('email')}</h1>
       {/* Delete Account Confirmation Popup */}
       {showDeletePopup && (
         <div style={styles.popup}>
