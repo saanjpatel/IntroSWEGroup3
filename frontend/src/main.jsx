@@ -5,7 +5,8 @@ import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Profile from "./components/Profile";
-import UpdatePassword from "./components/UpdatePassword"; //
+import Weather from "./components/Weather";
+import Tracking from "./components/Tracking";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -15,7 +16,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/update-password" element={<UpdatePassword />} />
+        <Route path="/weather" element={<Weather />} />
+        <Route path="/tracking" element={<Tracking />} />
       </Routes>
     </Router>
   </React.StrictMode>
