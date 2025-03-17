@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,13 +8,13 @@ const Profile = () => {
   const [logOutMsg, setLogOutMsg] = useState("");
   const [deleteMsg, setDeleteMsg] = useState("");
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     try {
       const response = await axios.post("http://127.0.0.1:5000/logout", {
-        email: localStorage.getItem('email')
+        email: localStorage.getItem("email"),
       });
       if (response.status === 200) {
-        localStorage.removeItem('email')
+        localStorage.removeItem("email");
         navigate("/login");
       }
     } catch (error) {
@@ -25,6 +25,7 @@ const Profile = () => {
       }
     }
   };
+
   const handleDeleteAccount = () => {
     setShowDeletePopup(true);
   };
@@ -37,10 +38,10 @@ const Profile = () => {
     setShowDeletePopup(false);
     try {
       const response = await axios.post("http://127.0.0.1:5000/delete", {
-        email: localStorage.getItem('email')
+        email: localStorage.getItem("email"),
       });
       if (response.status === 200) {
-        localStorage.removeItem('email')
+        localStorage.removeItem("email");
         navigate("/");
       }
     } catch (error) {
@@ -50,7 +51,6 @@ const Profile = () => {
         setDeleteMsg("An unexpected error occurred.");
       }
     }
-
   };
 
   const cancelDelete = () => {
@@ -59,19 +59,34 @@ const Profile = () => {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <button onClick={handleLogout} style={styles.logoutButton}>
-          Logout
-        </button>
-        <button onClick={handleUpdatePassword} style={styles.updateButton}>
-          Update Password
-        </button>
-        <button onClick={handleDeleteAccount} style={styles.deleteButton}>
-          Delete Account
+      {/* Top Section with Light Grey Background */}
+      <div style={styles.topSection}>
+        <div style={styles.buttonGroup}>
+          <button onClick={handleLogout} style={styles.logoutButton}>
+            Logout
+          </button>
+          <button onClick={handleUpdatePassword} style={styles.updateButton}>
+            Update Password
+          </button>
+          <button onClick={handleDeleteAccount} style={styles.deleteButton}>
+            Delete Account
+          </button>
+        </div>
+      </div>
+
+      {/* Profile Section */}
+      <div style={styles.profileContent}>
+        <div style={styles.profileSection}>
+          <div style={styles.profilePicCircle}>Profile Pic</div>
+          <div style={styles.namePlaceholder}>John Doe</div>
+        </div>
+
+        {/* Tracking Button */}
+        <button onClick={() => navigate("/tracking")} style={styles.trackingButton}>
+          Tracking
         </button>
       </div>
-      <h1>Profile</h1>
-      <h1>hello {localStorage.getItem('email')}</h1>
+
       {/* Delete Account Confirmation Popup */}
       {showDeletePopup && (
         <div style={styles.popup}>
@@ -94,17 +109,22 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
     backgroundColor: "#f0f0f0",
-    position: "relative",
+    minHeight: "100vh",
   },
-  header: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
+  topSection: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    padding: "10px",
+    backgroundColor: "#e0e0e0", // Light grey background
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    zIndex: 1000,
+  },
+  buttonGroup: {
     display: "flex",
+    justifyContent: "flex-end",
     gap: "10px",
   },
   logoutButton: {
@@ -120,7 +140,7 @@ const styles = {
     padding: "10px 20px",
     borderRadius: "5px",
     border: "none",
-    backgroundColor: "#28a745",  // Green color for update password
+    backgroundColor: "#28a745", // Green color for update password
     color: "#fff",
     cursor: "pointer",
     fontSize: "1rem",
@@ -135,6 +155,41 @@ const styles = {
     fontSize: "1rem",
     transition: "background-color 0.3s, color 0.3s",
   },
+  profileContent: {
+    marginTop: "80px", // Space for the top section
+    padding: "20px",
+    width: "100%",
+  },
+  profileSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "20px",
+    marginBottom: "20px",
+  },
+  profilePicCircle: {
+    width: "100px",
+    height: "100px",
+    borderRadius: "50%",
+    backgroundColor: "#ccc",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1rem",
+    color: "#000",
+  },
+  namePlaceholder: {
+    fontSize: "1.5rem",
+    fontWeight: "bold",
+  },
+  trackingButton: {
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#28a745",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
   popup: {
     position: "fixed",
     top: 0,
@@ -145,6 +200,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 1001,
   },
   popupContent: {
     backgroundColor: "#fff",
