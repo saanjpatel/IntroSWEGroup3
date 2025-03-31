@@ -9,8 +9,8 @@ CORS(app)
 def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
-        database='stayfit_db',
-        user='',
+        database='',
+        user='postgres',
         password='',
         port='5432'
     )
