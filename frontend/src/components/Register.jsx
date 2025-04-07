@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../assets/SFLogo.png"; // Adjust path to your logo file
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // Toggle password visibility
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Toggle confirm password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleRegister = async() => {
@@ -24,13 +25,13 @@ const Register = () => {
           setPasswordError("");
         }
         else if (password !== confirmPassword && !bool_end_with_ufl) {
-          setPasswordError("Passwords do not match and email does not end with @ufl.edu!"); // Set error message
+          setPasswordError("Passwords do not match and email does not end with @ufl.edu!");
         }
         else if (password !== confirmPassword) {
-          setPasswordError("Passwords do not match!"); // Set error message
+          setPasswordError("Passwords do not match!");
         }
         else if (!bool_end_with_ufl) {
-          setPasswordError("Email does not end with @ufl.edu!"); // Set error message
+          setPasswordError("Email does not end with @ufl.edu!");
         }
     } catch (error){
       if (error.response && error.response.data) {
@@ -41,79 +42,133 @@ const Register = () => {
       }
     }
   };
+
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>StayFit</h1>
-      <input
-        type="email"
-        placeholder="Add Your @ufl.edu Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={styles.input}
+      {/* Logo in top left */}
+      <img 
+        src={logo} 
+        alt="StayFit Logo" 
+        style={styles.logo} 
+        onClick={() => navigate("/")}
       />
-      <div style={styles.passwordContainer}>
-        <input
-          type={showPassword ? "text" : "password"} // Toggle between text and password
-          placeholder="Create Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
-        <button
-          onClick={() => setShowPassword(!showPassword)}
-          style={styles.eyeButton}
-        >
-          {showPassword ? "👁️" : "👁️‍🗨️"}
-        </button>
+
+      {/* Main content */}
+      <div style={styles.content}>
+        <h1 style={styles.title}>StayFit</h1>
+        
+        <div style={styles.formGroup}>
+          <input
+            type="email"
+            placeholder="Add Your @ufl.edu Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={styles.input}
+          />
+          
+          <div style={styles.passwordContainer}>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Create Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={styles.input}
+            />
+            <button
+              onClick={() => setShowPassword(!showPassword)}
+              style={styles.eyeButton}
+            >
+              {showPassword ? "👁️" : "👁️‍🗨️"}
+            </button>
+          </div>
+          
+          <div style={styles.passwordContainer}>
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              style={styles.input}
+            />
+            <button
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              style={styles.eyeButton}
+            >
+              {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+            </button>
+          </div>
+          
+          {passwordError && <p style={styles.errorText}>{passwordError}</p>}
+          
+          <button onClick={handleRegister} style={styles.primaryButton}>
+            Register
+          </button>
+          
+          <button onClick={() => navigate("/login")} style={styles.secondaryButton}>
+            Already Have an Account?
+          </button>
+        </div>
       </div>
-      <div style={styles.passwordContainer}>
-        <input
-          type={showConfirmPassword ? "text" : "password"} // Toggle between text and password
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          style={styles.input}
-        />
-        <button
-          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          style={styles.eyeButton}
-        >
-          {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
-        </button>
-      </div>
-      {passwordError && <p style={styles.errorText}>{passwordError}</p>}
-      <button onClick={handleRegister} style={styles.button}>
-        Register
-      </button>
-      <button onClick={() => navigate("/login")} style={styles.linkButton}>
-        Already Have an Account?
-      </button>
     </div>
   );
 };
 
 const styles = {
   container: {
+    minHeight: "100vh",
+    backgroundColor: "#f8f9fa",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    padding: "2rem",
+    position: "relative",
+  },
+  logo: {
+    position: "absolute",
+    top: "2rem",
+    left: "2rem",
+    height: "50px",
+    cursor: "pointer",
+  },
+  content: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#f0f0f0",
+    height: "calc(100vh - 8rem)",
+    textAlign: "center",
+    maxWidth: "500px",
+    margin: "0 auto",
   },
   title: {
-    fontSize: "2rem",
-    marginBottom: "20px",
+    fontSize: "3rem",
+    fontWeight: "800",
+    background: "linear-gradient(90deg, #3a7bd5, #00d2ff)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    marginBottom: "2rem",
+    fontFamily: "'Poppins', sans-serif",
+  },
+  formGroup: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
   },
   input: {
-    width: "300px",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "5px",
-    border: "1px solid #ccc",
+    width: "100%",
+    padding: "1rem",
+    borderRadius: "8px",
+    border: "1px solid #ced4da",
+    fontSize: "1rem",
+    transition: "border-color 0.2s",
+    ":focus": {
+      outline: "none",
+      borderColor: "#3a7bd5",
+      boxShadow: "0 0 0 3px rgba(58, 123, 213, 0.1)",
+    },
   },
   passwordContainer: {
     position: "relative",
+    width: "107%",
     display: "flex",
     alignItems: "center",
   },
@@ -124,28 +179,50 @@ const styles = {
     border: "none",
     cursor: "pointer",
     fontSize: "1.2rem",
+    color: "#6c757d",
+    padding: "8px", // Added padding for better click area
+    margin: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  button: {
-    width: "320px",
-    padding: "10px",
-    margin: "10px 0",
-    borderRadius: "5px",
+  primaryButton: {
+    width: "107%",
+    padding: "1rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
+    backgroundColor: "#20c997",
+    color: "white",
     cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "600",
+    marginTop: "1rem",
+    transition: "all 0.2s ease",
+    ":hover": {
+      backgroundColor: "#12b886",
+      transform: "translateY(-1px)",
+    },
   },
-  linkButton: {
-    background: "none",
-    border: "none",
-    color: "#007bff",
+  secondaryButton: {
+    width: "107%",
+    padding: "1rem",
+    borderRadius: "8px",
+    border: "1px solid #ced4da",
+    backgroundColor: "transparent",
+    color: "#495057",
     cursor: "pointer",
-    margin: "5px 0",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    ":hover": {
+      backgroundColor: "#f8f9fa",
+    },
   },
   errorText: {
-    color: "red",
+    color: "#dc3545",
     fontSize: "0.9rem",
-    margin: "5px 0",
+    textAlign: "left",
+    margin: "-0.5rem 0 0.5rem 0",
   },
 };
 
