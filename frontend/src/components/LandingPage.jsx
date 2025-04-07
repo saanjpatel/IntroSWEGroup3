@@ -1,65 +1,103 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/SFLogo.png"; // Adjust path to your logo file
 
 const LandingPage = () => {
   const navigate = useNavigate();
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>
-        <button onClick={() => navigate("/register")} style={styles.linkButton}>
+      {/* Logo in top left */}
+      <img 
+        src={logo} 
+        alt="StayFit Logo" 
+        style={styles.logo} 
+        onClick={() => navigate("/")}
+      />
+
+      {/* Navigation buttons in top right */}
+      <div style={styles.navButtons}>
+        <button onClick={() => navigate("/weather")} style={styles.navButton}>
+          Check Weather
+        </button>
+        <button onClick={() => navigate("/register")} style={styles.navButton}>
           Register
         </button>
-        <span style={styles.separator}>|</span>
-        <button onClick={() => navigate("/login")} style={styles.linkButton}>
+        <button onClick={() => navigate("/login")} style={styles.navButton}>
           Login
         </button>
       </div>
-      <h1 style={styles.title}>StayFit</h1>
-      <button onClick={() => navigate("/weather")} style={styles.weatherButton}>
-        Check Weather
-      </button>
+
+      {/* Main content */}
+      <div style={styles.content}>
+        <h1 style={styles.title}>StayFit</h1>
+        <p style={styles.subtitle}>Your personal fitness companion</p>
+      </div>
     </div>
   );
 };
 
 const styles = {
   container: {
+    minHeight: "100vh",
+    backgroundColor: "#f8f9fa",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    padding: "2rem",
+    position: "relative",
+  },
+  logo: {
+    position: "absolute",
+    top: "2rem",
+    left: "2rem",
+    height: "50px",
+    cursor: "pointer",
+  },
+  navButtons: {
+    position: "absolute",
+    top: "2rem",
+    right: "2rem",
+    display: "flex",
+    gap: "1rem",
+  },
+  navButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
+    border: "none",
+    backgroundColor: "transparent",
+    color: "#495057",
+    cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+    ":hover": {
+      backgroundColor: "#e9ecef",
+      color: "#212529",
+    },
+  },
+  content: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#f0f0f0",
-  },
-  header: {
-    position: "absolute",
-    top: "20px",
-    right: "20px",
+    height: "calc(100vh - 8rem)",
+    textAlign: "center",
+    maxWidth: "800px",
+    margin: "0 auto",
   },
   title: {
-    fontSize: "3rem",
+    fontSize: "4rem",
+    fontWeight: "800",
+    background: "linear-gradient(90deg, #3a7bd5, #00d2ff)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    marginBottom: "1rem",
+    fontFamily: "'Poppins', sans-serif",
   },
-  linkButton: {
-    background: "none",
-    border: "none",
-    color: "#007bff",
-    cursor: "pointer",
-    fontSize: "1rem",
-  },
-  separator: {
-    margin: "0 10px",
-    color: "#007bff",
-  },
-  weatherButton: {
-    marginTop: "20px",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#28a745",
-    color: "#fff",
-    cursor: "pointer",
-    fontSize: "1rem",
+  subtitle: {
+    fontSize: "1.5rem",
+    color: "#6c757d",
+    marginBottom: "2rem",
+    fontWeight: "300",
   },
 };
 
