@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 const Tracking = ({ exercises, setExercises }) => {
   const navigate = useNavigate();
   const [exerciseType, setExerciseType] = useState("");
   const [exerciseTime, setExerciseTime] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [data, setData] = useState([])
+  const[trackingError, setTrackingError] = useState("")
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/checktracking", {
+      method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(localStorage.getItem("email")),
+    }).then(
+        res => res.json()
+    ).then(
+        data => {
+          setData(data)
+          console.log(data)
+        }
+    )
+  }, )
 
   // Sort exercises: date (newest first) → name (A-Z) → time (ascending)
   const sortedExercises = [...exercises].sort((a, b) => {
@@ -14,25 +31,27 @@ const Tracking = ({ exercises, setExercises }) => {
     if (a.date < b.date) return 1;
     
     // If dates are equal, sort by exercise name (A-Z)
-    if (a.type.toLowerCase() < b.type.toLowerCase()) return -1;
-    if (a.type.toLowerCase() > b.type.toLowerCase()) return 1;
+    //if (a.type.toLowerCase() < b.type.toLowerCase()) return -1;
+    //if (a.type.toLowerCase() > b.type.toLowerCase()) return 1;
     
     // If names are equal, sort by duration (shortest first)
     return parseInt(a.time) - parseInt(b.time);
   });
 
-  const handleAddExercise = () => {
-    if (exerciseType && exerciseTime) {
-      const newExercise = {
-        id: Date.now(),
-        type: exerciseType.trim(),
-        time: exerciseTime,
-        date: date
-      };
-      setExercises([...exercises, newExercise]);
-      setExerciseType("");
-      setExerciseTime("");
+  const handleAddExercise = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/addtracking", {
+        email: localStorage.getItem("email"),
+        exerciseType,
+        exerciseTime,
+        date
+      });
+    }catch (error) {
+      if (error.response && error.response.data) {
+        setTrackingError(error.response.data.error || "Tracking Error")
+      }
     }
+
   };
 
   const handleDeleteExercise = (id) => {
@@ -72,7 +91,7 @@ const Tracking = ({ exercises, setExercises }) => {
         </button>
       </div>
 
-      {sortedExercises.length > 0 ? (
+      {data.length > 0 ? (
         <div style={styles.tableContainer}>
           <table style={styles.table}>
             <thead>
@@ -84,11 +103,11 @@ const Tracking = ({ exercises, setExercises }) => {
               </tr>
             </thead>
             <tbody>
-              {sortedExercises.map((exercise) => (
+              {data.map((exercise) => (
                 <tr key={exercise.id} style={styles.tr}>
-                  <td style={styles.td}>{exercise.date}</td>
-                  <td style={styles.td}>{exercise.type}</td>
-                  <td style={styles.td}>{exercise.time}</td>
+                  <td style={styles.td}>{exercise[4]}</td>
+                  <td style={styles.td}>{exercise[2]}</td>
+                  <td style={styles.td}>{exercise[3]}</td>
                   <td style={styles.td}>
                     <button 
                       onClick={() => handleDeleteExercise(exercise.id)}
@@ -148,6 +167,15 @@ const styles = {
     fontSize: "1rem",
   },
   addButton: {
+    padding: "10px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#28a745",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
+  retrieveButton: {
     padding: "10px",
     borderRadius: "5px",
     border: "none",
