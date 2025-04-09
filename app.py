@@ -18,8 +18,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='',
-        password='',
+        user='postgres',
+        password='Google232.',
         port='5432'
     )
     return conn
@@ -166,18 +166,18 @@ def delete():
         return jsonify({'error': str(e)}), 500
 
 ############################################
-# Ticketmaster Discovery API Proxy Endpoint with Location Search
+# Ticketmaster Discovery API Proxy Endpoint with Keyword Search
 ############################################
 @app.route('/api/tm-events', methods=['GET'])
 def tm_events():
     # Retrieve query parameters
     countryCode = request.args.get('countryCode', 'US')
+    # This keyword parameter will now perform a general keyword search
     keyword = request.args.get('keyword', '')
     radius = request.args.get('radius', '')
     unit = request.args.get('unit', 'miles')
     size = request.args.get('size', '20')
     page = request.args.get('page', '0')
-    # New parameter: location search by city
     city = request.args.get('city', '')
 
     # Your Ticketmaster API key
@@ -195,13 +195,19 @@ def tm_events():
         params["radius"] = radius
         params["unit"] = unit
     if city:
-        # Adding the city parameter so Ticketmaster can filter by location.
         params["city"] = city
 
     response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
     data = response.json()
     return jsonify(data), response.status_code
 
+############################################
+# (Optional) Catch-All Route for Serving React Production Build
+############################################
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
+# def catch_all(path):
+#     return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
