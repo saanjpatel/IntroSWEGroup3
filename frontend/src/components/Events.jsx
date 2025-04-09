@@ -2,91 +2,128 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Events = () => {
+  // States for events, errors, and the search input.
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
-  const location = "Gainesville, FL";
-  const query = "";
+  const [searchCity, setSearchCity] = useState("");
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const token = localStorage.getItem("eventbrite_token");
-        if (!token) {
-          setError("Not authenticated with Eventbrite. Please authenticate.");
-          return;
-        }
-        const response = await axios.get("https://www.eventbriteapi.com/v3/events/search/", {
-          params: { "location.address": location, q: query },
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
-        if (response.data && Array.isArray(response.data.events)) {
-          if (response.data.events.length > 0) {
-            setEvents(response.data.events);
-            setError("");
-          } else {
-            setEvents([]);
-            setError("No events found.");
-          }
-        } else if (response.data.error) {
-          setEvents([]);
-          setError(response.data.error);
-        } else {
-          setEvents([]);
-          setError("Unexpected response format.");
-        }
-      } catch (err) {
-        setError(
-          err.response && err.response.data
-            ? err.response.data.error || "Error fetching events."
-            : "An unexpected error occurred while fetching events."
-        );
+  // Default parameters for the API call.
+  const countryCode = "US";
+  const keyword = "";
+  const radius = ""; // Optionally use if needed.
+  const unit = "miles";
+  const size = "20";
+  const page = "0";
+
+  // Function to fetch events with an optional city parameter.
+  const fetchEvents = async (cityParam = "") => {
+    try {
+      const response = await axios.get("http://127.0.0.1:5000/api/tm-events", {
+        params: { countryCode, keyword, radius, unit, size, page, city: cityParam },
+        withCredentials: false
+      });
+      // Ticketmaster returns events in _embedded.events if available.
+      if (response.data && response.data._embedded && Array.isArray(response.data._embedded.events)) {
+        setEvents(response.data._embedded.events);
+        setError("");
+      } else if (response.data.fault) {
+        setEvents([]);
+        setError(response.data.fault.faultstring || "Error fetching events.");
+      } else {
+        setEvents([]);
+        setError("Unexpected response format.");
       }
-    };
+    } catch (err) {
+      setError(
+        err.response && err.response.data
+          ? err.response.data.fault?.faultstring || "Error fetching events."
+          : "An unexpected error occurred while fetching events."
+      );
+    }
+  };
 
+  // Initial fetch without a city filter.
+  useEffect(() => {
     fetchEvents();
-  }, [location, query]);
+  }, []);
+
+  // Handle the search form submission and trigger a new fetch.
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchEvents(searchCity.trim());
+  };
 
   return (
     <div style={styles.page}>
       <header style={styles.header}>
-        <h1 style={styles.headerTitle}>Campus Events</h1>
+        <h1 style={styles.headerTitle}>Local Events</h1>
         <p style={styles.headerSubtitle}>
-          Discover exciting events happening on campus in Gainesville.
+          Discover local events near you in the United States.
         </p>
       </header>
-      <main style={styles.main}>
-        {error ? (
-          <p style={styles.errorText}>{error}</p>
-        ) : events.length === 0 ? (
-          <p style={styles.loadingText}>Loading events...</p>
-        ) : (
-          <div style={styles.grid}>
-            {events.map((event) => (
-              <div key={event.id} style={styles.card}>
-                <h2 style={styles.eventTitle}>
-                  {event.name && event.name.text ? event.name.text : "Untitled Event"}
-                </h2>
-                <p style={styles.eventDesc}>
-                  {event.description && event.description.text
-                    ? event.description.text.substring(0, 120) + "..."
-                    : "No description available."}
-                </p>
-                <a
-                  href={event.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={styles.button}
-                >
-                  View Details
-                </a>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
+
+      {/* Search Form */}
+      <div style={styles.searchContainer}>
+        <form onSubmit={handleSearchSubmit}>
+          <input
+            type="text"
+            placeholder="Enter a city (e.g., New York)"
+            value={searchCity}
+            onChange={(e) => setSearchCity(e.target.value)}
+            style={styles.searchInput}
+          />
+          <button type="submit" style={styles.searchButton}>Search</button>
+        </form>
+      </div>
+
+      {/* Display Error If Any */}
+      {error && <p style={styles.errorText}>{error}</p>}
+
+      {/* Display Events in a Table View */}
+      {events.length === 0 && !error ? (
+        <p style={styles.loadingText}>Loading events...</p>
+      ) : (
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>Event Name</th>
+              <th style={styles.th}>Date</th>
+              <th style={styles.th}>Venue</th>
+              <th style={styles.th}>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events.map((event) => {
+              // Format the event date.
+              const eventDate =
+                event.dates && event.dates.start && event.dates.start.localDate
+                  ? event.dates.start.localDate
+                  : "N/A";
+              // Get the venue name if available.
+              const venue =
+                event._embedded &&
+                event._embedded.venues &&
+                event._embedded.venues[0] &&
+                event._embedded.venues[0].name
+                  ? event._embedded.venues[0].name
+                  : "N/A";
+
+              return (
+                <tr key={event.id} style={styles.tr}>
+                  <td style={styles.td}>{event.name || "Untitled Event"}</td>
+                  <td style={styles.td}>{eventDate}</td>
+                  <td style={styles.td}>{venue}</td>
+                  <td style={styles.td}>
+                    <a href={event.url} target="_blank" rel="noopener noreferrer" style={styles.link}>
+                      View Details
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
@@ -95,8 +132,8 @@ const styles = {
   page: {
     background: "linear-gradient(135deg, #ECE9E6, #FFFFFF)",
     minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column"
+    padding: "2rem",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
   },
   header: {
     backgroundColor: "#007bff",
@@ -113,11 +150,30 @@ const styles = {
     fontSize: "1.2rem",
     margin: "0.5rem 0"
   },
-  main: {
-    flex: 1,
-    padding: "2rem",
-    maxWidth: "1200px",
-    margin: "0 auto"
+  searchContainer: {
+    margin: "1rem 0",
+    textAlign: "center"
+  },
+  searchInput: {
+    padding: "0.5rem",
+    width: "250px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+    marginRight: "0.5rem",
+    fontSize: "1rem"
+  },
+  searchButton: {
+    padding: "0.5rem 1rem",
+    borderRadius: "4px",
+    border: "none",
+    backgroundColor: "#20c997",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "1rem"
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center"
   },
   loadingText: {
     fontSize: "1.2rem",
@@ -125,45 +181,27 @@ const styles = {
     color: "#555",
     marginTop: "2rem"
   },
-  errorText: {
-    fontSize: "1.2rem",
-    textAlign: "center",
-    marginTop: "2rem",
-    color: "red"
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    marginTop: "1rem"
   },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-    gap: "1.5rem",
-    marginTop: "2rem"
+  th: {
+    border: "1px solid #ddd",
+    padding: "0.75rem",
+    backgroundColor: "#f2f2f2",
+    textAlign: "left"
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: "10px",
-    padding: "1.5rem",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between"
+  tr: {
+    borderBottom: "1px solid #ddd"
   },
-  eventTitle: {
-    fontSize: "1.4rem",
-    marginBottom: "0.5rem",
-    color: "#007bff"
+  td: {
+    padding: "0.75rem",
+    border: "1px solid #ddd"
   },
-  eventDesc: {
-    fontSize: "1rem",
-    color: "#555",
-    marginBottom: "1rem",
-    flexGrow: 1
-  },
-  button: {
+  link: {
     textDecoration: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    padding: "0.5rem 1rem",
-    borderRadius: "5px",
-    textAlign: "center",
+    color: "#007bff",
     fontWeight: "bold"
   }
 };

@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify, session, redirect, send_from_directory
+#!/usr/bin/env python3
+from flask import Flask, request, jsonify, redirect, send_from_directory
 import psycopg2
 from flask_cors import CORS
 import requests
@@ -6,40 +7,25 @@ import os
 
 # Initialize Flask – static_folder is used for production builds if needed.
 app = Flask(__name__, static_folder="build", static_url_path="")
-# Generate a strong secret key (for development, os.urandom(24) is acceptable)
+
+# For development, use a randomly generated key; in production, use a fixed strong secret.
 app.secret_key = os.urandom(24)
 
-# Configure session so that cookies are sent cross-origin.
-app.config.update(
-    SESSION_COOKIE_SAMESITE="None",    # "None" if front end and back end are on different ports
-    SESSION_COOKIE_SECURE=False         # Set to True in production if using HTTPS
-)
-
-# Allow credentials in CORS so that session cookies are passed.
-CORS(app, supports_credentials=True)
+# Enable CORS (for API calls from your React front end)
+CORS(app)
 
 def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         user='',
         password='',
-=======
-        user='postgres',
-        password='Google232.',
->>>>>>> Stashed changes
-=======
-        user='postgres',
-        password='Google232.',
->>>>>>> Stashed changes
         port='5432'
     )
     return conn
 
 ############################################
-# Registration Endpoint
+# (Other endpoints: /register, /login, /update-password, /logout, /delete, etc.)
 ############################################
 @app.route('/register', methods=['POST'])
 def register():
@@ -52,8 +38,6 @@ def register():
         cur = conn.cursor()
         cur.execute('SELECT * FROM logs WHERE username = %s', (email,))
         user_entry = cur.fetchone()
-        cur.execute('SELECT * FROM logs WHERE password = %s', (password,))
-        password_entry = cur.fetchone()
         cur.close()
         conn.close()
 
@@ -66,7 +50,7 @@ def register():
         elif not email.endswith('@ufl.edu'):
             print("Email does not end with @ufl.edu!")
             return jsonify({'error': 'Email does not end with @ufl.edu!'}), 401
-        elif not user_entry and not password_entry:
+        elif not user_entry:
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute('INSERT INTO logs (username, password) VALUES (%s, %s)', (email, password))
@@ -75,7 +59,7 @@ def register():
             conn.close()
             print("Registration successful")
             return jsonify({'message': 'Registration successful'}), 200
-        elif user_entry:
+        else:
             print("Email already exists")
             return jsonify({'error': 'Email already exists'}), 401
 
@@ -83,9 +67,6 @@ def register():
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-############################################
-# Login Endpoint
-############################################
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -111,9 +92,6 @@ def login():
     print("Login failed: credentials do not match.")
     return jsonify({'error': 'Invalid credentials'}), 401
 
-############################################
-# Update Password Endpoint
-############################################
 @app.route('/update-password', methods=['POST'])
 def update_password():
     data = request.get_json()
@@ -150,9 +128,6 @@ def update_password():
         print("Database error during update password:", str(e))
         return jsonify({'error': str(e)}), 500
 
-############################################
-# Logout Endpoint
-############################################
 @app.route('/logout', methods=['POST'])
 def logout():
     try:
@@ -173,9 +148,6 @@ def logout():
         print("Database error during logout:", str(e))
         return jsonify({'error': str(e)}), 500
 
-############################################
-# Delete Account Endpoint
-############################################
 @app.route('/delete', methods=['POST', 'DELETE'])
 def delete():
     try:
@@ -193,165 +165,43 @@ def delete():
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-@app.route('/addtracking', methods=['POST'])
-def addtracking():
-    data = request.get_json()
-    email = str(data.get('email'))
-    exerciseType = str(data.get('exerciseType'))
-    exerciseTime = str(data.get('exerciseTime'))
-    date = str(data.get('date'))
-    print("got data")
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('INSERT INTO track (username, type, time, date) VALUES (%s, %s, %s, %s)', (email, exerciseType, exerciseTime, date))
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify({'message': 'Tracking successful'}), 200
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
+############################################
+# Ticketmaster Discovery API Proxy Endpoint with Location Search
+############################################
+@app.route('/api/tm-events', methods=['GET'])
+def tm_events():
+    # Retrieve query parameters
+    countryCode = request.args.get('countryCode', 'US')
+    keyword = request.args.get('keyword', '')
+    radius = request.args.get('radius', '')
+    unit = request.args.get('unit', 'miles')
+    size = request.args.get('size', '20')
+    page = request.args.get('page', '0')
+    # New parameter: location search by city
+    city = request.args.get('city', '')
 
-@app.route('/checktracking', methods=['POST', 'GET'])
-def checktracking():
-    print("check")
-    curr_email = request.get_json()
-    print(curr_email)
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM track WHERE username = %s', (curr_email,))
-        data = cur.fetchall()
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify(data)
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
-@app.route('/')
-def home():
-    return "Flask API"
-=======
-############################################
-# Eventbrite OAuth Redirect Endpoint
-# (Automatically starts OAuth if no code is provided)
-############################################
-@app.route('/oauth/redirect', methods=['GET'])
-def oauth_redirect():
-    code = request.args.get('code')
-    if not code:
-        client_id = "EYPKMDVUGG73ZWQBXB"
-        redirect_uri = "http://localhost:5000/oauth/redirect"
-        auth_url = (
-            f"https://www.eventbrite.com/oauth/authorize?"
-            f"response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-        )
-        return redirect(auth_url)
-    token_url = "https://www.eventbrite.com/oauth/token"
-    payload = {
-        "grant_type": "authorization_code",
-        "client_id": "EYPKMDVUGG73ZWQBXB",
-        "client_secret": "5OC3BNXGN425RGOQ4WWBZJNFCSRS73SRCRLWEX77RENG7NDYD6",
-        "code": code,
-        "redirect_uri": "http://localhost:5000/oauth/redirect",
-    }
-    headers = {"content-type": "application/x-www-form-urlencoded"}
-    response = requests.post(token_url, data=payload, headers=headers)
-    data = response.json()
-    if response.ok:
-        private_token = data.get("access_token")
-        session["eventbrite_token"] = private_token
-        print("OAuth successful, token:", private_token)
-        return jsonify({"message": "Successfully authenticated", "private_token": private_token}), 200
-    else:
-        return jsonify({"error": data.get("error_description", "OAuth token exchange failed")}), 500
+    # Your Ticketmaster API key
+    tm_api_key = "hAg0tYg9wKuYyPMhX1CdWd2ZAVKJuucA"
 
-=======
-############################################
-# Eventbrite OAuth Redirect Endpoint
-# (Automatically starts OAuth if no code is provided)
-############################################
-@app.route('/oauth/redirect', methods=['GET'])
-def oauth_redirect():
-    code = request.args.get('code')
-    if not code:
-        client_id = "EYPKMDVUGG73ZWQBXB"
-        redirect_uri = "http://localhost:5000/oauth/redirect"
-        auth_url = (
-            f"https://www.eventbrite.com/oauth/authorize?"
-            f"response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-        )
-        return redirect(auth_url)
-    token_url = "https://www.eventbrite.com/oauth/token"
-    payload = {
-        "grant_type": "authorization_code",
-        "client_id": "EYPKMDVUGG73ZWQBXB",
-        "client_secret": "5OC3BNXGN425RGOQ4WWBZJNFCSRS73SRCRLWEX77RENG7NDYD6",
-        "code": code,
-        "redirect_uri": "http://localhost:5000/oauth/redirect",
-    }
-    headers = {"content-type": "application/x-www-form-urlencoded"}
-    response = requests.post(token_url, data=payload, headers=headers)
-    data = response.json()
-    if response.ok:
-        private_token = data.get("access_token")
-        session["eventbrite_token"] = private_token
-        print("OAuth successful, token:", private_token)
-        return jsonify({"message": "Successfully authenticated", "private_token": private_token}), 200
-    else:
-        return jsonify({"error": data.get("error_description", "OAuth token exchange failed")}), 500
-
->>>>>>> Stashed changes
-############################################
-# API Endpoint to Proxy Eventbrite Events
-############################################
-@app.route('/api/events', methods=['GET'])
-def api_events():
-    token = session.get("eventbrite_token")
-    if not token:
-        # Instead of a 302 redirect (which XHR won’t follow automatically), return an error with auth_url.
-        client_id = "EYPKMDVUGG73ZWQBXB"
-        redirect_uri = "http://localhost:5000/oauth/redirect"
-        auth_url = (
-            f"https://www.eventbrite.com/oauth/authorize?"
-            f"response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
-        )
-        return jsonify({"error": "Not authenticated with Eventbrite", "auth_url": auth_url}), 401
-
-    # Read query parameters; default location is Gainesville, FL.
-    location = request.args.get('location', "Gainesville, FL")
-    q = request.args.get('q', "")
     params = {
-        "location.address": location,
-        "q": q
+        "apikey": tm_api_key,
+        "countryCode": countryCode,
+        "size": size,
+        "page": page
     }
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
-    response = requests.get("https://www.eventbriteapi.com/v3/events/search/", params=params, headers=headers)
+    if keyword:
+        params["keyword"] = keyword
+    if radius:
+        params["radius"] = radius
+        params["unit"] = unit
+    if city:
+        # Adding the city parameter so Ticketmaster can filter by location.
+        params["city"] = city
+
+    response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
     data = response.json()
     return jsonify(data), response.status_code
 
-############################################
-# (Optional) Catch-All Route for Serving React Production Build
-############################################
-# Uncomment these lines in production if serving your React build from Flask:
-#
-# @app.route('/', defaults={'path': ''})
-# @app.route('/<path:path>')
-# def catch_all(path):
-#     return send_from_directory(app.static_folder, "index.html")
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "../assets/SFLogo.png"; // Adjust path to your logo file
+import logo from "../assets/SFLogo.png";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -36,6 +36,7 @@ const Profile = () => {
   };
 
   const handleViewEvents = () => {
+    // Navigate to the events page that uses Ticketmaster API data.
     navigate("/events");
   };
 
@@ -66,10 +67,10 @@ const Profile = () => {
     <div style={styles.container}>
       {/* Header with logo and navigation buttons */}
       <div style={styles.header}>
-        <img 
-          src={logo} 
-          alt="StayFit Logo" 
-          style={styles.logo} 
+        <img
+          src={logo}
+          alt="StayFit Logo"
+          style={styles.logo}
           onClick={() => navigate("/")}
         />
         <div style={styles.navButtons}>
@@ -82,31 +83,23 @@ const Profile = () => {
           <button onClick={handleDeleteAccount} style={styles.deleteButton}>
             Delete Account
           </button>
-          <button onClick={handleViewEvents} style={styles.eventsButton}>
-            Events
+          <button onClick={handleViewEvents} style={styles.navButton}>
+            View Ticketmaster Events
           </button>
         </div>
       </div>
 
-      {/* Profile section below header */}
+      {/* Profile Section */}
       <div style={styles.profileSection}>
         <div style={styles.profilePicCircle}>Profile Pic</div>
         <div style={styles.profileInfo}>
-          <h2 style={styles.name}>{localStorage.getItem('email') || 'User'}</h2>
+          <h2 style={styles.name}>
+            {localStorage.getItem("email") || "User"}
+          </h2>
           <button onClick={() => navigate("/tracking")} style={styles.primaryButton}>
             Tracking
           </button>
         </div>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-        {/* Tracking Button */}
-        <button onClick={() => navigate("/tracking")} style={styles.trackingButton}>
-          Tracking
-        </button>
->>>>>>> Stashed changes
       </div>
 
       {/* Delete Account Confirmation Popup */}
@@ -114,7 +107,9 @@ const Profile = () => {
         <div style={styles.popup}>
           <div style={styles.popupContent}>
             <h3 style={styles.popupTitle}>Confirm Account Deletion</h3>
-            <p style={styles.popupText}>Are you sure you want to permanently delete your account?</p>
+            <p style={styles.popupText}>
+              Are you sure you want to permanently delete your account?
+            </p>
             <div style={styles.popupButtons}>
               <button onClick={cancelDelete} style={styles.secondaryButton}>
                 Cancel
@@ -137,21 +132,7 @@ const styles = {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
     padding: "2rem",
   },
-<<<<<<< Updated upstream
   header: {
-=======
-  topSection: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: "10px",
-    backgroundColor: "#e0e0e0",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    zIndex: 1000,
-  },
-  buttonGroup: {
->>>>>>> Stashed changes
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -161,44 +142,31 @@ const styles = {
     height: "50px",
     cursor: "pointer",
   },
-<<<<<<< Updated upstream
   navButtons: {
     display: "flex",
     gap: "1rem",
-=======
-  updateButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
+  },
+  navButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#28a745",
-    color: "#fff",
+    backgroundColor: "#e9ecef",
+    color: "#495057",
     cursor: "pointer",
     fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
   deleteButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#fff",
-    color: "#000",
+    backgroundColor: "#dc3545",
+    color: "white",
     cursor: "pointer",
     fontSize: "1rem",
-    transition: "background-color 0.3s, color 0.3s",
-  },
-  eventsButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#6c757d",
-    color: "#fff",
-    cursor: "pointer",
-    fontSize: "1rem",
-  },
-  profileContent: {
-    marginTop: "80px",
-    padding: "20px",
-    width: "100%",
->>>>>>> Stashed changes
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
   profileSection: {
     display: "flex",
@@ -229,34 +197,6 @@ const styles = {
     color: "#212529",
     margin: 0,
   },
-  navButton: {
-    padding: "0.75rem 1.5rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#e9ecef",
-    color: "#495057",
-    cursor: "pointer",
-    fontSize: "1rem",
-    fontWeight: "500",
-    transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#dee2e6",
-    },
-  },
-  deleteButton: {
-    padding: "0.75rem 1.5rem",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#dc3545",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "1rem",
-    fontWeight: "500",
-    transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#c82333",
-    },
-  },
   primaryButton: {
     padding: "0.75rem 1.5rem",
     borderRadius: "8px",
@@ -267,9 +207,6 @@ const styles = {
     fontSize: "1rem",
     fontWeight: "500",
     transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#12b886",
-    },
   },
   popup: {
     position: "fixed",
@@ -318,9 +255,6 @@ const styles = {
     fontSize: "1rem",
     fontWeight: "500",
     transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#f8f9fa",
-    },
   },
   dangerButton: {
     padding: "0.75rem 1.5rem",
@@ -332,9 +266,6 @@ const styles = {
     fontSize: "1rem",
     fontWeight: "500",
     transition: "all 0.2s ease",
-    ":hover": {
-      backgroundColor: "#c82333",
-    },
   },
 };
 
