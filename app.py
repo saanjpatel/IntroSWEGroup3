@@ -18,8 +18,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='',
-        password='',
+        user='postgres',
+        password='Google232.',
         port='5432'
     )
     return conn
@@ -166,18 +166,18 @@ def delete():
         return jsonify({'error': str(e)}), 500
 
 ############################################
-# Ticketmaster Discovery API Proxy Endpoint with Location Search
+# Ticketmaster Discovery API Proxy Endpoint with Keyword Search
 ############################################
 @app.route('/api/tm-events', methods=['GET'])
 def tm_events():
     # Retrieve query parameters
     countryCode = request.args.get('countryCode', 'US')
+    # This keyword parameter will now perform a general keyword search
     keyword = request.args.get('keyword', '')
     radius = request.args.get('radius', '')
     unit = request.args.get('unit', 'miles')
     size = request.args.get('size', '20')
     page = request.args.get('page', '0')
-    # New parameter: location search by city
     city = request.args.get('city', '')
 
     # Your Ticketmaster API key
@@ -195,51 +195,19 @@ def tm_events():
         params["radius"] = radius
         params["unit"] = unit
     if city:
-        # Adding the city parameter so Ticketmaster can filter by location.
         params["city"] = city
 
     response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
     data = response.json()
     return jsonify(data), response.status_code
 
-@app.route('/addtracking', methods=['POST'])
-def addtracking():
-    data = request.get_json()
-    email = str(data.get('email'))
-    exerciseType = str(data.get('exerciseType'))
-    exerciseTime = str(data.get('exerciseTime'))
-    date = str(data.get('date'))
-    print("got data")
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('INSERT INTO track (username, type, time, date) VALUES (%s, %s, %s, %s)', (email, exerciseType, exerciseTime, date))
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify({'message': 'Tracking successful'}), 200
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
+############################################
+# (Optional) Catch-All Route for Serving React Production Build
+############################################
+# @app.route('/', defaults={'path': ''})
+# @app.route('/<path:path>')
+# def catch_all(path):
+#     return send_from_directory(app.static_folder, "index.html")
 
-@app.route('/checktracking', methods=['POST', 'GET'])
-def checktracking():
-    print("check")
-    curr_email = request.get_json()
-    print(curr_email)
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM track WHERE username = %s', (curr_email,))
-        data = cur.fetchall()
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify(data)
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
 if __name__ == "__main__":
     app.run(debug=True)
