@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../assets/SFLogo.png";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -34,6 +35,11 @@ const Profile = () => {
     navigate("/update-password");
   };
 
+  const handleViewEvents = () => {
+    // Navigate to the events page that uses Ticketmaster API data.
+    navigate("/events");
+  };
+
   const confirmDelete = async () => {
     setShowDeletePopup(false);
     try {
@@ -59,45 +65,59 @@ const Profile = () => {
 
   return (
     <div style={styles.container}>
-      {/* Top Section with Light Grey Background */}
-      <div style={styles.topSection}>
-        <div style={styles.buttonGroup}>
-          <button onClick={handleLogout} style={styles.logoutButton}>
+      {/* Header with logo and navigation buttons */}
+      <div style={styles.header}>
+        <img
+          src={logo}
+          alt="StayFit Logo"
+          style={styles.logo}
+          onClick={() => navigate("/")}
+        />
+        <div style={styles.navButtons}>
+          <button onClick={handleLogout} style={styles.navButton}>
             Logout
           </button>
-          <button onClick={handleUpdatePassword} style={styles.updateButton}>
+          <button onClick={handleUpdatePassword} style={styles.navButton}>
             Update Password
           </button>
           <button onClick={handleDeleteAccount} style={styles.deleteButton}>
             Delete Account
           </button>
+          <button onClick={handleViewEvents} style={styles.navButton}>
+            View Ticketmaster Events
+          </button>
         </div>
       </div>
 
       {/* Profile Section */}
-      <div style={styles.profileContent}>
-        <div style={styles.profileSection}>
-          <div style={styles.profilePicCircle}>Profile Pic</div>
-          <div style={styles.namePlaceholder}>John Doe</div>
+      <div style={styles.profileSection}>
+        <div style={styles.profilePicCircle}>Profile Pic</div>
+        <div style={styles.profileInfo}>
+          <h2 style={styles.name}>
+            {localStorage.getItem("email") || "User"}
+          </h2>
+          <button onClick={() => navigate("/tracking")} style={styles.primaryButton}>
+            Tracking
+          </button>
         </div>
-
-        {/* Tracking Button */}
-        <button onClick={() => navigate("/tracking")} style={styles.trackingButton}>
-          Tracking
-        </button>
       </div>
 
       {/* Delete Account Confirmation Popup */}
       {showDeletePopup && (
         <div style={styles.popup}>
           <div style={styles.popupContent}>
-            <p>Are you sure you want to delete your account?</p>
-            <button onClick={confirmDelete} style={styles.confirmButton}>
-              Confirm
-            </button>
-            <button onClick={cancelDelete} style={styles.cancelButton}>
-              Cancel
-            </button>
+            <h3 style={styles.popupTitle}>Confirm Account Deletion</h3>
+            <p style={styles.popupText}>
+              Are you sure you want to permanently delete your account?
+            </p>
+            <div style={styles.popupButtons}>
+              <button onClick={cancelDelete} style={styles.secondaryButton}>
+                Cancel
+              </button>
+              <button onClick={confirmDelete} style={styles.dangerButton}>
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -107,88 +127,86 @@ const Profile = () => {
 
 const styles = {
   container: {
-    display: "flex",
-    flexDirection: "column",
-    backgroundColor: "#f0f0f0",
     minHeight: "100vh",
+    backgroundColor: "#f8f9fa",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    padding: "2rem",
   },
-  topSection: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    right: 0,
-    padding: "10px",
-    backgroundColor: "#e0e0e0", // Light grey background
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    zIndex: 1000,
-  },
-  buttonGroup: {
+  header: {
     display: "flex",
-    justifyContent: "flex-end",
-    gap: "10px",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "2rem",
   },
-  logoutButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
+  logo: {
+    height: "50px",
+    cursor: "pointer",
+  },
+  navButtons: {
+    display: "flex",
+    gap: "1rem",
+  },
+  navButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
+    backgroundColor: "#e9ecef",
+    color: "#495057",
     cursor: "pointer",
     fontSize: "1rem",
-  },
-  updateButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#28a745", // Green color for update password
-    color: "#fff",
-    cursor: "pointer",
-    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
   deleteButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#fff",
-    color: "#000",
+    backgroundColor: "#dc3545",
+    color: "white",
     cursor: "pointer",
     fontSize: "1rem",
-    transition: "background-color 0.3s, color 0.3s",
-  },
-  profileContent: {
-    marginTop: "80px", // Space for the top section
-    padding: "20px",
-    width: "100%",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
   profileSection: {
     display: "flex",
     alignItems: "center",
-    gap: "20px",
-    marginBottom: "20px",
+    gap: "1.5rem",
+    marginTop: "2rem",
   },
   profilePicCircle: {
     width: "100px",
     height: "100px",
     borderRadius: "50%",
-    backgroundColor: "#ccc",
+    backgroundColor: "#e9ecef",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "1rem",
-    color: "#000",
+    fontSize: "1.2rem",
+    color: "#6c757d",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   },
-  namePlaceholder: {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
+  profileInfo: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
   },
-  trackingButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
+  name: {
+    fontSize: "1.8rem",
+    fontWeight: "600",
+    color: "#212529",
+    margin: 0,
+  },
+  primaryButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
     border: "none",
-    backgroundColor: "#28a745",
-    color: "#fff",
+    backgroundColor: "#20c997",
+    color: "white",
     cursor: "pointer",
     fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
   popup: {
     position: "fixed",
@@ -204,27 +222,50 @@ const styles = {
   },
   popupContent: {
     backgroundColor: "#fff",
-    padding: "20px",
-    borderRadius: "10px",
+    padding: "2rem",
+    borderRadius: "12px",
     textAlign: "center",
+    maxWidth: "500px",
+    width: "90%",
+    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
   },
-  confirmButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#ff4444",
-    color: "#fff",
-    cursor: "pointer",
-    margin: "0 10px",
+  popupTitle: {
+    fontSize: "1.5rem",
+    fontWeight: "600",
+    marginBottom: "1rem",
+    color: "#212529",
   },
-  cancelButton: {
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    backgroundColor: "#007bff",
-    color: "#fff",
+  popupText: {
+    fontSize: "1rem",
+    color: "#6c757d",
+    marginBottom: "2rem",
+  },
+  popupButtons: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "1rem",
+  },
+  secondaryButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
+    border: "1px solid #ced4da",
+    backgroundColor: "transparent",
+    color: "#495057",
     cursor: "pointer",
-    margin: "0 10px",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
+  },
+  dangerButton: {
+    padding: "0.75rem 1.5rem",
+    borderRadius: "8px",
+    border: "none",
+    backgroundColor: "#dc3545",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "1rem",
+    fontWeight: "500",
+    transition: "all 0.2s ease",
   },
 };
 
