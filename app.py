@@ -23,8 +23,13 @@ def get_db_connection():
         host='localhost',
         database='stayfit_db',
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         user='',
         password='',
+=======
+        user='postgres',
+        password='Google232.',
+>>>>>>> Stashed changes
 =======
         user='postgres',
         password='Google232.',
@@ -189,6 +194,7 @@ def delete():
         return jsonify({'error': str(e)}), 500
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 @app.route('/addtracking', methods=['POST'])
 def addtracking():
     data = request.get_json()
@@ -266,6 +272,42 @@ def oauth_redirect():
     else:
         return jsonify({"error": data.get("error_description", "OAuth token exchange failed")}), 500
 
+=======
+############################################
+# Eventbrite OAuth Redirect Endpoint
+# (Automatically starts OAuth if no code is provided)
+############################################
+@app.route('/oauth/redirect', methods=['GET'])
+def oauth_redirect():
+    code = request.args.get('code')
+    if not code:
+        client_id = "EYPKMDVUGG73ZWQBXB"
+        redirect_uri = "http://localhost:5000/oauth/redirect"
+        auth_url = (
+            f"https://www.eventbrite.com/oauth/authorize?"
+            f"response_type=code&client_id={client_id}&redirect_uri={redirect_uri}"
+        )
+        return redirect(auth_url)
+    token_url = "https://www.eventbrite.com/oauth/token"
+    payload = {
+        "grant_type": "authorization_code",
+        "client_id": "EYPKMDVUGG73ZWQBXB",
+        "client_secret": "5OC3BNXGN425RGOQ4WWBZJNFCSRS73SRCRLWEX77RENG7NDYD6",
+        "code": code,
+        "redirect_uri": "http://localhost:5000/oauth/redirect",
+    }
+    headers = {"content-type": "application/x-www-form-urlencoded"}
+    response = requests.post(token_url, data=payload, headers=headers)
+    data = response.json()
+    if response.ok:
+        private_token = data.get("access_token")
+        session["eventbrite_token"] = private_token
+        print("OAuth successful, token:", private_token)
+        return jsonify({"message": "Successfully authenticated", "private_token": private_token}), 200
+    else:
+        return jsonify({"error": data.get("error_description", "OAuth token exchange failed")}), 500
+
+>>>>>>> Stashed changes
 ############################################
 # API Endpoint to Proxy Eventbrite Events
 ############################################
@@ -306,6 +348,9 @@ def api_events():
 # @app.route('/<path:path>')
 # def catch_all(path):
 #     return send_from_directory(app.static_folder, "index.html")
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 if __name__ == '__main__':

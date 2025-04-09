@@ -98,7 +98,10 @@ const Profile = () => {
           </button>
         </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
         {/* Tracking Button */}
         <button onClick={() => navigate("/tracking")} style={styles.trackingButton}>
           Tracking

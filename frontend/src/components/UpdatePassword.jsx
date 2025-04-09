@@ -1,14 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+<<<<<<< Updated upstream
 import logo from "../src/assets/SFLogo.png"; // Make sure to add your logo file
+=======
+>>>>>>> Stashed changes
 
 const UpdatePassword = () => {
   const [email, setEmail] = useState("");
   const [new_password, setNewPassword] = useState("");
   const [confirm_password, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+<<<<<<< Updated upstream
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+=======
+>>>>>>> Stashed changes
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -46,6 +52,7 @@ const UpdatePassword = () => {
 
   return (
     <div style={styles.container}>
+<<<<<<< Updated upstream
       <img 
         src={logo} 
         alt="StayFit Logo" 
@@ -132,6 +139,53 @@ const UpdatePassword = () => {
             </div>
           </form>
         </div>
+=======
+      <div style={styles.card}>
+        <h2>Update Password</h2>
+        {message && <p>{message}</p>}
+        <form onSubmit={handleSubmit}>
+          <div>
+            <label>Email: </label>
+            <br />
+            <input
+              type="email"
+              value={email}
+              placeholder="Enter your email"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>New Password: </label>
+            <br />
+            <input
+              type="password"
+              value={new_password}
+              placeholder="New password"
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Confirm New Password: </label>
+            <br />
+            <input
+              type="password"
+              value={confirm_password}
+              placeholder="Confirm new password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <br />
+          <button type="submit" style={styles.button}>
+            Reset Password
+          </button>
+          <button type="button" onClick={handleCancel} style={styles.button}>
+            Cancel
+          </button>
+        </form>
+>>>>>>> Stashed changes
       </div>
     </div>
   );
@@ -139,6 +193,7 @@ const UpdatePassword = () => {
 
 const styles = {
   container: {
+<<<<<<< Updated upstream
     minHeight: "100vh",
     backgroundColor: "#f8f9fa",
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
@@ -291,6 +346,30 @@ const styles = {
     borderRadius: "6px",
     marginBottom: "1rem",
     textAlign: "center",
+=======
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: "100vh",
+    backgroundColor: "#f0f0f0",
+  },
+  card: {
+    padding: "2rem",
+    borderRadius: "8px",
+    backgroundColor: "#fff",
+    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+    textAlign: "center",
+  },
+  button: {
+    margin: "10px",
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+>>>>>>> Stashed changes
   },
 };
 
