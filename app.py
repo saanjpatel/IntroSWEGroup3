@@ -1,10 +1,18 @@
-from flask import Flask, request, jsonify, session
+#!/usr/bin/env python3
+from flask import Flask, request, jsonify, redirect, send_from_directory
 import psycopg2
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
-app = Flask(__name__)
-CORS(app)
+import requests
+import os
 
+# Initialize Flask – static_folder is used for production builds if needed.
+app = Flask(__name__, static_folder="build", static_url_path="")
+
+# For development, use a randomly generated key; in production, use a fixed strong secret.
+app.secret_key = os.urandom(24)
+
+# Enable CORS (for API calls from your React front end)
+CORS(app)
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -16,7 +24,9 @@ def get_db_connection():
     )
     return conn
 
-# Registration endpoint – note: adjusted .edu check example
+############################################
+# (Other endpoints: /register, /login, /update-password, /logout, /delete, etc.)
+############################################
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
@@ -28,10 +38,9 @@ def register():
         cur = conn.cursor()
         cur.execute('SELECT * FROM logs WHERE username = %s', (email,))
         user_entry = cur.fetchone()
-        cur.execute('SELECT * FROM logs WHERE password = %s', (password,))
-        password_entry = cur.fetchone()
         cur.close()
         conn.close()
+
         if (not email.endswith('@ufl.edu')) and (password != confirmPassword):
             print("Passwords do not match and email does not end with @ufl.edu!")
             return jsonify({'error': 'Passwords do not match and email does not end with @ufl.edu!'}), 401
@@ -41,7 +50,7 @@ def register():
         elif not email.endswith('@ufl.edu'):
             print("Email does not end with @ufl.edu!")
             return jsonify({'error': 'Email does not end with @ufl.edu!'}), 401
-        elif not user_entry and not password_entry:
+        elif not user_entry:
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute('INSERT INTO logs (username, password) VALUES (%s, %s)', (email, password))
@@ -50,27 +59,20 @@ def register():
             conn.close()
             print("Registration successful")
             return jsonify({'message': 'Registration successful'}), 200
-        elif user_entry and password_entry:
-            print("Email and password already exists")
-            return jsonify({'error': 'Email and password already exists'}), 401
-        elif user_entry:
+        else:
             print("Email already exists")
             return jsonify({'error': 'Email already exists'}), 401
-        elif password_entry:
-            print("Password already exists")
-            return jsonify({'error': 'Password already exists'}), 401
+
     except Exception as e:
-        print("database error:", str(e))
+        print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-# Login endpoint (no encryption)
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
     print("Received login for:", email)
-
     try:
         conn = get_db_connection()
         cur = conn.cursor()
@@ -90,7 +92,6 @@ def login():
     print("Login failed: credentials do not match.")
     return jsonify({'error': 'Invalid credentials'}), 401
 
-# Update Password endpoint
 @app.route('/update-password', methods=['POST'])
 def update_password():
     data = request.get_json()
@@ -108,7 +109,6 @@ def update_password():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        # Check if user exists
         cur.execute('SELECT * FROM logs WHERE username = %s', (email,))
         user_record = cur.fetchone()
         if not user_record:
@@ -117,7 +117,6 @@ def update_password():
             print("No user found with email:", email)
             return jsonify({'error': 'User not found'}), 404
 
-        # Update password for the user
         cur.execute('UPDATE logs SET password = %s WHERE username = %s', (new_password, email))
         conn.commit()
         cur.close()
@@ -128,7 +127,7 @@ def update_password():
     except Exception as e:
         print("Database error during update password:", str(e))
         return jsonify({'error': str(e)}), 500
-# logout verify backend
+
 @app.route('/logout', methods=['POST'])
 def logout():
     try:
@@ -143,14 +142,13 @@ def logout():
         if not logged_user:
             return jsonify({'error': 'User not found'}), 404
         else:
-            print("logout successful")
-            return jsonify({'message': 'logout successful'}), 200
-
+            print("Logout successful")
+            return jsonify({'message': 'Logout successful'}), 200
     except Exception as e:
         print("Database error during logout:", str(e))
         return jsonify({'error': str(e)}), 500
-# delete account backend
-@app.route('/delete', methods=['POST','DELETE'])
+
+@app.route('/delete', methods=['POST', 'DELETE'])
 def delete():
     try:
         curr_email = request.get_json()
@@ -167,48 +165,43 @@ def delete():
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
 
-@app.route('/addtracking', methods=['POST'])
-def addtracking():
-    data = request.get_json()
-    email = str(data.get('email'))
-    exerciseType = str(data.get('exerciseType'))
-    exerciseTime = str(data.get('exerciseTime'))
-    date = str(data.get('date'))
-    print("got data")
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('INSERT INTO track (username, type, time, date) VALUES (%s, %s, %s, %s)', (email, exerciseType, exerciseTime, date))
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify({'message': 'Tracking successful'}), 200
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
+############################################
+# Ticketmaster Discovery API Proxy Endpoint with Location Search
+############################################
+@app.route('/api/tm-events', methods=['GET'])
+def tm_events():
+    # Retrieve query parameters
+    countryCode = request.args.get('countryCode', 'US')
+    keyword = request.args.get('keyword', '')
+    radius = request.args.get('radius', '')
+    unit = request.args.get('unit', 'miles')
+    size = request.args.get('size', '20')
+    page = request.args.get('page', '0')
+    # New parameter: location search by city
+    city = request.args.get('city', '')
 
-@app.route('/checktracking', methods=['POST', 'GET'])
-def checktracking():
-    print("check")
-    curr_email = request.get_json()
-    print(curr_email)
-    try:
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM track WHERE username = %s', (curr_email,))
-        data = cur.fetchall()
-        conn.commit()
-        cur.close()
-        conn.close()
-        print("Tracking successful")
-        return jsonify(data)
-    except Exception as e:
-        print("Database error:", str(e))
-        return jsonify({'error': str(e)}), 500
-@app.route('/')
-def home():
-    return "Flask API"
+    # Your Ticketmaster API key
+    tm_api_key = "hAg0tYg9wKuYyPMhX1CdWd2ZAVKJuucA"
 
-if __name__ == '__main__':
+    params = {
+        "apikey": tm_api_key,
+        "countryCode": countryCode,
+        "size": size,
+        "page": page
+    }
+    if keyword:
+        params["keyword"] = keyword
+    if radius:
+        params["radius"] = radius
+        params["unit"] = unit
+    if city:
+        # Adding the city parameter so Ticketmaster can filter by location.
+        params["city"] = city
+
+    response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
+    data = response.json()
+    return jsonify(data), response.status_code
+
+
+if __name__ == "__main__":
     app.run(debug=True)

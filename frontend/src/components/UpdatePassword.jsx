@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../src/assets/SFLogo.png"; // Make sure to add your logo file
+import logo from "/src/assets/SFLogo.png"; // Make sure to add your logo file
 
 const UpdatePassword = () => {
   const [email, setEmail] = useState("");
@@ -46,23 +46,23 @@ const UpdatePassword = () => {
 
   return (
     <div style={styles.container}>
-      <img 
-        src={logo} 
-        alt="StayFit Logo" 
-        style={styles.logo} 
+      <img
+        src={logo}
+        alt="StayFit Logo"
+        style={styles.logo}
         onClick={() => navigate("/")}
       />
 
       <div style={styles.content}>
         <div style={styles.card}>
           <h2 style={styles.title}>Update Password</h2>
-          
+
           {message && (
             <p style={message.includes("successfully") ? styles.successMessage : styles.errorMessage}>
               {message}
             </p>
           )}
-          
+
           <form onSubmit={handleSubmit} style={styles.form}>
             <div style={styles.formGroup}>
               <label style={styles.label}>Email</label>
@@ -75,7 +75,7 @@ const UpdatePassword = () => {
                 required
               />
             </div>
-            
+
             <div style={styles.formGroup}>
               <label style={styles.label}>New Password</label>
               <div style={styles.passwordContainer}>
@@ -96,7 +96,7 @@ const UpdatePassword = () => {
                 </button>
               </div>
             </div>
-            
+
             <div style={styles.formGroup}>
               <label style={styles.label}>Confirm New Password</label>
               <div style={styles.passwordContainer}>
@@ -117,14 +117,14 @@ const UpdatePassword = () => {
                 </button>
               </div>
             </div>
-            
+
             <div style={styles.buttonGroup}>
               <button type="submit" style={styles.primaryButton}>
                 Reset Password
               </button>
-              <button 
-                type="button" 
-                onClick={handleCancel} 
+              <button
+                type="button"
+                onClick={handleCancel}
                 style={styles.secondaryButton}
               >
                 Cancel
