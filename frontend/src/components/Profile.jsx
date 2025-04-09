@@ -35,6 +35,10 @@ const Profile = () => {
     navigate("/update-password");
   };
 
+  const handleViewEvents = () => {
+    navigate("/events");
+  };
+
   const confirmDelete = async () => {
     setShowDeletePopup(false);
     try {
@@ -78,6 +82,9 @@ const Profile = () => {
           <button onClick={handleDeleteAccount} style={styles.deleteButton}>
             Delete Account
           </button>
+          <button onClick={handleViewEvents} style={styles.eventsButton}>
+            Events
+          </button>
         </div>
       </div>
 
@@ -90,6 +97,13 @@ const Profile = () => {
             Tracking
           </button>
         </div>
+<<<<<<< Updated upstream
+=======
+        {/* Tracking Button */}
+        <button onClick={() => navigate("/tracking")} style={styles.trackingButton}>
+          Tracking
+        </button>
+>>>>>>> Stashed changes
       </div>
 
       {/* Delete Account Confirmation Popup */}
@@ -120,7 +134,21 @@ const styles = {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
     padding: "2rem",
   },
+<<<<<<< Updated upstream
   header: {
+=======
+  topSection: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    padding: "10px",
+    backgroundColor: "#e0e0e0",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    zIndex: 1000,
+  },
+  buttonGroup: {
+>>>>>>> Stashed changes
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
@@ -130,9 +158,44 @@ const styles = {
     height: "50px",
     cursor: "pointer",
   },
+<<<<<<< Updated upstream
   navButtons: {
     display: "flex",
     gap: "1rem",
+=======
+  updateButton: {
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#28a745",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
+  deleteButton: {
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#fff",
+    color: "#000",
+    cursor: "pointer",
+    fontSize: "1rem",
+    transition: "background-color 0.3s, color 0.3s",
+  },
+  eventsButton: {
+    padding: "10px 20px",
+    borderRadius: "5px",
+    border: "none",
+    backgroundColor: "#6c757d",
+    color: "#fff",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
+  profileContent: {
+    marginTop: "80px",
+    padding: "20px",
+    width: "100%",
+>>>>>>> Stashed changes
   },
   profileSection: {
     display: "flex",
