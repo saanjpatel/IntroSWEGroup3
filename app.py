@@ -18,8 +18,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='',
-        password='',
+        user='postgres',
+        password='Google232.',
         port='5432'
     )
     return conn
