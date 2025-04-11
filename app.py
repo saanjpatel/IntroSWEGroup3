@@ -18,8 +18,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='postgres',
-        password='Google232.',
+        user='',
+        password='',
         port='5432'
     )
     return conn
@@ -237,6 +237,22 @@ def checktracking():
         conn.close()
         print("Tracking successful")
         return jsonify(data)
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
+@app.route('/deletetracking', methods=['POST', 'DELETE'])
+def deletetracking():
+    try:
+        curr_id = request.get_json()
+        print(curr_id)
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM track WHERE id = %s', (curr_id["id"],))
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Delete successful")
+        return jsonify({'message': 'Delete successful'}), 200
     except Exception as e:
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
