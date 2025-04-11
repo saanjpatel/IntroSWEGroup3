@@ -58,8 +58,8 @@ const Tracking = ({ exercises, setExercises }) => {
 
   const handleDeleteExercise = async (id) => {
     try {
-      await axios.post("http://127.0.0.1:5000/deletetracking", {
-        id: id
+      await axios.delete("http://127.0.0.1:5000/deletetracking", {
+        data: {id: id}
       });
       // Refresh data after deleting
       const newData = await fetch("http://127.0.0.1:5000/checktracking", {
