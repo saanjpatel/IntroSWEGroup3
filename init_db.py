@@ -21,6 +21,13 @@ cur.execute('CREATE TABLE track (id serial PRIMARY KEY,'
             'time text,'
             'date text)'
             )
+cur.execute('DROP TABLE IF EXISTS goal;')
+cur.execute('CREATE TABLE goal (id serial PRIMARY KEY,'
+            'username text,'
+            'type text,'
+            'time text,'
+            'date text)'
+            )
 # insertion of a sample record into the logs table
 
 

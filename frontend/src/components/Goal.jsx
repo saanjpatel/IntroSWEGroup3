@@ -3,16 +3,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/SFLogo.png"; // Make sure to add your logo file
 
-const Tracking = ({ exercises, setExercises }) => {
+const Goal = ({ goals, setGoals }) => {
   const navigate = useNavigate();
-  const [exerciseType, setExerciseType] = useState("");
-  const [exerciseTime, setExerciseTime] = useState("");
+  const [goalType, setGoalType] = useState("");
+  const [goalTime, setGoalTime] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [data, setData] = useState([]);
-  const [trackingError, setTrackingError] = useState("");
+  const [goalError, setGoalError] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/checktracking", {
+    fetch("http://127.0.0.1:5000/checkgoal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(localStorage.getItem("email")),
@@ -26,50 +26,50 @@ const Tracking = ({ exercises, setExercises }) => {
     );
   }, []);
 
-  const sortedExercises = [...exercises].sort((a, b) => {
+  const sortedGoals = [...goals].sort((a, b) => {
     if (a.date > b.date) return -1;
     if (a.date < b.date) return 1;
     return parseInt(a.time) - parseInt(b.time);
   });
 
-  const handleAddExercise = async () => {
+  const handleAddGoal = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:5000/addtracking", {
+      const response = await axios.post("http://127.0.0.1:5000/addgoal", {
         email: localStorage.getItem("email"),
-        exerciseType,
-        exerciseTime,
+        goalType,
+        goalTime,
         date
       });
       // Refresh data after adding
-      const newData = await fetch("http://127.0.0.1:5000/checktracking", {
+      const newData = await fetch("http://127.0.0.1:5000/checkgoal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(localStorage.getItem("email")),
       }).then(res => res.json());
       setData(newData);
-      setExerciseType("");
-      setExerciseTime("");
+      setGoalType("");
+      setGoalTime("");
     } catch (error) {
       if (error.response && error.response.data) {
-        setTrackingError(error.response.data.error || "Tracking Error");
+        setGoalError(error.response.data.error || "Goal Error");
       }
     }
   };
 
-  const handleDeleteExercise = async (id) => {
+  const handleDeleteGoal = async (id) => {
     try {
-      await axios.delete("http://127.0.0.1:5000/deletetracking", {
+      await axios.delete("http://127.0.0.1:5000/deletegoal", {
         data: {id: id}
       });
       // Refresh data after deleting
-      const newData = await fetch("http://127.0.0.1:5000/checktracking", {
+      const newData = await fetch("http://127.0.0.1:5000/checkgoal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(localStorage.getItem("email")),
       }).then(res => res.json());
       setData(newData);
     } catch (error) {
-      console.error("Error deleting exercise:", error);
+      console.error("Error deleting goal:", error);
     }
   };
 
@@ -92,23 +92,23 @@ const Tracking = ({ exercises, setExercises }) => {
 
       {/* Main content */}
       <div style={styles.content}>
-        <h1 style={styles.title}>Fitness Activity Tracking</h1>
+        <h1 style={styles.title}>Fitness Goals</h1>
         
-        {trackingError && <p style={styles.errorText}>{trackingError}</p>}
+        {goalError && <p style={styles.errorText}>{goalError}</p>}
         
         <div style={styles.inputGroup}>
           <input
             type="text"
-            placeholder="Exercise Type (e.g., Running)"
-            value={exerciseType}
-            onChange={(e) => setExerciseType(e.target.value)}
+            placeholder="Goal Type (e.g., Running)"
+            value={goalType}
+            onChange={(e) => setGoalType(e.target.value)}
             style={styles.input}
           />
           <input
             type="number"
             placeholder="Duration (minutes)"
-            value={exerciseTime}
-            onChange={(e) => setExerciseTime(e.target.value)}
+            value={goalTime}
+            onChange={(e) => setGoalTime(e.target.value)}
             style={styles.input}
           />
           <input
@@ -117,8 +117,8 @@ const Tracking = ({ exercises, setExercises }) => {
             onChange={(e) => setDate(e.target.value)}
             style={styles.input}
           />
-          <button onClick={handleAddExercise} style={styles.primaryButton}>
-            Add Exercise
+          <button onClick={handleAddGoal} style={styles.primaryButton}>
+            Add Goal
           </button>
         </div>
 
@@ -128,20 +128,20 @@ const Tracking = ({ exercises, setExercises }) => {
               <thead>
                 <tr>
                   <th style={styles.th}>Date ▼</th>
-                  <th style={styles.th}>Exercise</th>
+                  <th style={styles.th}>Goal</th>
                   <th style={styles.th}>Duration (min)</th>
                   <th style={styles.th}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {data.map((exercise, index) => (
+                {data.map((goal, index) => (
                   <tr key={index} style={styles.tr}>
-                    <td style={styles.td}>{exercise[4]}</td>
-                    <td style={styles.td}>{exercise[2]}</td>
-                    <td style={styles.td}>{exercise[3]}</td>
+                    <td style={styles.td}>{goal[4]}</td>
+                    <td style={styles.td}>{goal[2]}</td>
+                    <td style={styles.td}>{goal[3]}</td>
                     <td style={styles.td}>
                       <button 
-                        onClick={() => handleDeleteExercise(exercise[0])}
+                        onClick={() => handleDeleteGoal(goal[0])}
                         style={styles.deleteButton}
                       >
                         Delete
@@ -153,7 +153,7 @@ const Tracking = ({ exercises, setExercises }) => {
             </table>
           </div>
         ) : (
-          <p style={styles.placeholder}>No exercises logged yet. Add your first exercise above!</p>
+          <p style={styles.placeholder}>No goals logged yet. Add your first goal above!</p>
         )}
       </div>
     </div>
@@ -300,4 +300,4 @@ const styles = {
   },
 };
 
-export default Tracking;
+export default Goal;
