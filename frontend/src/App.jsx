@@ -9,6 +9,7 @@ import Tracking from './components/Tracking';
 import UpdatePassword from './components/UpdatePassword.jsx';
 import Events from './components/Events';
 import OAuthAuthenticate from './components/OAuthAuthenticate';
+import Goal from "./components/Goal.jsx";
 
 function App() {
   const [exercises, setExercises] = useState(() => {
@@ -21,6 +22,18 @@ function App() {
   useState(() => {
     localStorage.setItem('exercises', JSON.stringify(exercises));
   }, [exercises]);
+
+const [goals, setGoals] = useState(() => {
+    // Load from localStorage if available
+    const saved = localStorage.getItem('goals');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // Save to localStorage whenever goals change
+  useState(() => {
+    localStorage.setItem('goals', JSON.stringify(goals));
+  }, [goals]);
+
 
   return (
     <Router>
@@ -41,6 +54,15 @@ function App() {
             <Tracking
               exercises={exercises}
               setExercises={setExercises}
+            />
+          }
+        />
+        <Route
+          path="/goal"
+          element={
+            <Goal
+              goals={goals}
+              setGoals={setGoals}
             />
           }
         />

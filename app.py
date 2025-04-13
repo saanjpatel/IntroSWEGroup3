@@ -256,6 +256,61 @@ def deletetracking():
     except Exception as e:
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
+@app.route('/addgoal', methods=['POST'])
+def addgoal():
+    data = request.get_json()
+    email = str(data.get('email'))
+    goalType = str(data.get('goalType'))
+    goalTime = str(data.get('goalTime'))
+    date = str(data.get('date'))
+    print("got data")
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('INSERT INTO goal (username, type, time, date) VALUES (%s, %s, %s, %s)', (email, goalType, goalTime, date))
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Goal successful")
+        return jsonify({'message': 'Goal successful'}), 200
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/checkgoal', methods=['POST', 'GET'])
+def checkgoal():
+    print("check")
+    curr_email = request.get_json()
+    print(curr_email)
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM goal WHERE username = %s', (curr_email,))
+        data = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Goal successful")
+        return jsonify(data)
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
+@app.route('/deletegoal', methods=['POST', 'DELETE'])
+def deletegoal():
+    try:
+        curr_id = request.get_json()
+        print(curr_id)
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('DELETE FROM goal WHERE id = %s', (curr_id["id"],))
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Delete successful")
+        return jsonify({'message': 'Delete successful'}), 200
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
 ############################################
 # (Optional) Catch-All Route for Serving React Production Build
 ############################################
