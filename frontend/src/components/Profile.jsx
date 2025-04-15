@@ -102,6 +102,9 @@ const Profile = () => {
           <button onClick={() => navigate("/goal")} style={styles.primaryButton}>
             Goals
           </button>
+          <button onClick={() => navigate("/analytics")} style={styles.primaryButton}>
+            Analytics
+          </button>
         </div>
       </div>
 

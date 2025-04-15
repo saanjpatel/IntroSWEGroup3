@@ -10,6 +10,7 @@ import UpdatePassword from './components/UpdatePassword.jsx';
 import Events from './components/Events';
 import OAuthAuthenticate from './components/OAuthAuthenticate';
 import Goal from "./components/Goal.jsx";
+import Analytics from "./components/Analytics.jsx";
 
 function App() {
   const [exercises, setExercises] = useState(() => {
@@ -46,8 +47,7 @@ const [goals, setGoals] = useState(() => {
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/oauth-callback" element={<OAuthAuthenticate />} />
         <Route path="/events" element={<Events />} />
-
-
+        <Route path="/analytics" element={<Analytics />} />
         <Route
           path="/tracking"
           element={
