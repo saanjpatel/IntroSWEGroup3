@@ -21,7 +21,7 @@ const Analytics = () => {
         console.log(data);
       }
     );
-  }, []);
+  }, );
 
   return (
     <div style={styles.container}>
@@ -53,24 +53,17 @@ const Analytics = () => {
                 <tr>
                   <th style={styles.th}>Date ▼</th>
                   <th style={styles.th}>Exercise</th>
-                  <th style={styles.th}>Duration (min)</th>
-                  <th style={styles.th}>Actions</th>
+                  <th style={styles.th}>Duration (min) Completed</th>
+                  <th style={styles.th}>Duration (min) Goal</th>
                 </tr>
               </thead>
               <tbody>
-                {data.map((exercise, index) => (
+                {data.map((analytic, index) => (
                   <tr key={index} style={styles.tr}>
-                    <td style={styles.td}>{exercise[4]}</td>
-                    <td style={styles.td}>{exercise[2]}</td>
-                    <td style={styles.td}>{exercise[3]}</td>
-                    <td style={styles.td}>
-                      <button
-                        onClick={() => handleDeleteExercise(exercise[0])}
-                        style={styles.deleteButton}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    <td style={styles.td}>{analytic[4]}</td>
+                    <td style={styles.td}>{analytic[2]}</td>
+                    <td style={styles.td}>{analytic[3]}</td>
+                    <td style={styles.td}>{analytic[8]}</td>
                   </tr>
                 ))}
               </tbody>
