@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "../assets/SFLogo.png"; // Adjust path to your logo file
+import logo from "../assets/SFLogo.png";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -12,33 +12,63 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = async() => {
+  const validatePassword = (password) => {
+    const errors = [];
+    
+    if (password.length < 8 || password.length > 24) {
+      errors.push("8-24 characters");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("one uppercase letter");
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push("one lowercase letter");
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push("one number");
+    }
+
+    if (errors.length > 0) {
+      return `Password must contain: ${errors.join(", ")}`;
+    }
+    return "";
+  };
+
+  const handleRegister = async () => {
+    const bool_end_with_ufl = email.endsWith("@ufl.edu");
+    const passwordValidationError = validatePassword(password);
+
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match!");
+      return;
+    }
+
+    if (!bool_end_with_ufl) {
+      setPasswordError("Email does not end with @ufl.edu!");
+      return;
+    }
+
     try {
-        const response = await axios.post("http://127.0.0.1:5000/register", {
-          email,
-          password,
-          confirmPassword
-        });
-        const bool_end_with_ufl = email.endsWith("@ufl.edu")
-        if (password === confirmPassword && bool_end_with_ufl && response.status === 200) {
-          navigate("/login");
-          setPasswordError("");
-        }
-        else if (password !== confirmPassword && !bool_end_with_ufl) {
-          setPasswordError("Passwords do not match and email does not end with @ufl.edu!");
-        }
-        else if (password !== confirmPassword) {
-          setPasswordError("Passwords do not match!");
-        }
-        else if (!bool_end_with_ufl) {
-          setPasswordError("Email does not end with @ufl.edu!");
-        }
-    } catch (error){
-      if (error.response && error.response.data) {
-        setPasswordError(error.response.data.error || "Registration Error")
+      const response = await axios.post("http://127.0.0.1:5000/register", {
+        email,
+        password,
+        confirmPassword,
+      });
+
+      if (response.status === 200) {
+        navigate("/login");
+        setPasswordError("");
       }
-      else {
-        setPasswordError("An unexpected error occurred.")
+    } catch (error) {
+      if (error.response && error.response.data) {
+        setPasswordError(error.response.data.error || "Registration Error");
+      } else {
+        setPasswordError("An unexpected error occurred.");
       }
     }
   };
@@ -46,17 +76,17 @@ const Register = () => {
   return (
     <div style={styles.container}>
       {/* Logo in top left */}
-      <img 
-        src={logo} 
-        alt="StayFit Logo" 
-        style={styles.logo} 
+      <img
+        src={logo}
+        alt="StayFit Logo"
+        style={styles.logo}
         onClick={() => navigate("/")}
       />
 
       {/* Main content */}
       <div style={styles.content}>
         <h1 style={styles.title}>StayFit</h1>
-        
+
         <div style={styles.formGroup}>
           <input
             type="email"
@@ -65,13 +95,17 @@ const Register = () => {
             onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
           />
-          
+
           <div style={styles.passwordContainer}>
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Create Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                // Clear error when user starts typing
+                if (passwordError) setPasswordError("");
+              }}
               style={styles.input}
             />
             <button
@@ -81,7 +115,7 @@ const Register = () => {
               {showPassword ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
-          
+
           <div style={styles.passwordContainer}>
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -97,14 +131,27 @@ const Register = () => {
               {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
             </button>
           </div>
-          
+
           {passwordError && <p style={styles.errorText}>{passwordError}</p>}
-          
+
+          <div style={styles.passwordRequirements}>
+            <p style={styles.requirementTitle}>Password must contain:</p>
+            <ul style={styles.requirementList}>
+              <li style={styles.requirementItem}>8-24 characters</li>
+              <li style={styles.requirementItem}>At least one uppercase letter (A-Z)</li>
+              <li style={styles.requirementItem}>At least one lowercase letter (a-z)</li>
+              <li style={styles.requirementItem}>At least one number (0-9)</li>
+            </ul>
+          </div>
+
           <button onClick={handleRegister} style={styles.primaryButton}>
             Register
           </button>
-          
-          <button onClick={() => navigate("/login")} style={styles.secondaryButton}>
+
+          <button
+            onClick={() => navigate("/login")}
+            style={styles.secondaryButton}
+          >
             Already Have an Account?
           </button>
         </div>
@@ -180,7 +227,7 @@ const styles = {
     cursor: "pointer",
     fontSize: "1.2rem",
     color: "#6c757d",
-    padding: "8px", // Added padding for better click area
+    padding: "8px",
     margin: 0,
     display: "flex",
     alignItems: "center",
@@ -223,6 +270,36 @@ const styles = {
     fontSize: "0.9rem",
     textAlign: "left",
     margin: "-0.5rem 0 0.5rem 0",
+  },
+  passwordRequirements: {
+    width: "107%",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "8px",
+    padding: "1rem",
+    marginBottom: "1rem",
+    textAlign: "left",
+  },
+  requirementTitle: {
+    fontWeight: "600",
+    color: "#495057",
+    marginBottom: "0.5rem",
+  },
+  requirementList: {
+    listStyleType: "none",
+    padding: 0,
+    margin: 0,
+  },
+  requirementItem: {
+    color: "#6c757d",
+    fontSize: "0.9rem",
+    marginBottom: "0.25rem",
+    display: "flex",
+    alignItems: "center",
+    ":before": {
+      content: "'•'",
+      marginRight: "0.5rem",
+      color: "#6c757d",
+    },
   },
 };
 

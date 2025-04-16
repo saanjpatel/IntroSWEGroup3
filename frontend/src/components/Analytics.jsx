@@ -3,16 +3,13 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import logo from "../assets/SFLogo.png"; // Make sure to add your logo file
 
-const Tracking = ({ exercises, setExercises }) => {
+const Analytics = () => {
   const navigate = useNavigate();
-  const [exerciseType, setExerciseType] = useState("");
-  const [exerciseTime, setExerciseTime] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [data, setData] = useState([]);
-  const [trackingError, setTrackingError] = useState("");
+  const [analyticsError, setAnalyticsError] = useState("");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/checktracking", {
+    fetch("http://127.0.0.1:5000/checkanalytics", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(localStorage.getItem("email")),
@@ -24,62 +21,15 @@ const Tracking = ({ exercises, setExercises }) => {
         console.log(data);
       }
     );
-  }, []);
-
-  const sortedExercises = [...exercises].sort((a, b) => {
-    if (a.date > b.date) return -1;
-    if (a.date < b.date) return 1;
-    return parseInt(a.time) - parseInt(b.time);
-  });
-
-  const handleAddExercise = async () => {
-    try {
-      const response = await axios.post("http://127.0.0.1:5000/addtracking", {
-        email: localStorage.getItem("email"),
-        exerciseType,
-        exerciseTime,
-        date
-      });
-      // Refresh data after adding
-      const newData = await fetch("http://127.0.0.1:5000/checktracking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(localStorage.getItem("email")),
-      }).then(res => res.json());
-      setData(newData);
-      setExerciseType("");
-      setExerciseTime("");
-    } catch (error) {
-      if (error.response && error.response.data) {
-        setTrackingError(error.response.data.error || "Tracking Error");
-      }
-    }
-  };
-
-  const handleDeleteExercise = async (id) => {
-    try {
-      await axios.delete("http://127.0.0.1:5000/deletetracking", {
-        data: {id: id}
-      });
-      // Refresh data after deleting
-      const newData = await fetch("http://127.0.0.1:5000/checktracking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(localStorage.getItem("email")),
-      }).then(res => res.json());
-      setData(newData);
-    } catch (error) {
-      console.error("Error deleting exercise:", error);
-    }
-  };
+  }, );
 
   return (
     <div style={styles.container}>
       {/* Logo in top left */}
-      <img 
-        src={logo} 
-        alt="StayFit Logo" 
-        style={styles.logo} 
+      <img
+        src={logo}
+        alt="StayFit Logo"
+        style={styles.logo}
         onClick={() => navigate("/")}
       />
 
@@ -92,35 +42,9 @@ const Tracking = ({ exercises, setExercises }) => {
 
       {/* Main content */}
       <div style={styles.content}>
-        <h1 style={styles.title}>Fitness Activity Tracking</h1>
-        
-        {trackingError && <p style={styles.errorText}>{trackingError}</p>}
-        
-        <div style={styles.inputGroup}>
-          <input
-            type="text"
-            placeholder="Exercise Type (e.g., Running)"
-            value={exerciseType}
-            onChange={(e) => setExerciseType(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="number"
-            placeholder="Duration (minutes)"
-            value={exerciseTime}
-            onChange={(e) => setExerciseTime(e.target.value)}
-            style={styles.input}
-          />
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            style={styles.input}
-          />
-          <button onClick={handleAddExercise} style={styles.primaryButton}>
-            Add Exercise
-          </button>
-        </div>
+        <h1 style={styles.title}>Fitness Analytics</h1>
+
+        {analyticsError && <p style={styles.errorText}>{analyticsError}</p>}
 
         {data.length > 0 ? (
           <div style={styles.tableContainer}>
@@ -129,31 +53,24 @@ const Tracking = ({ exercises, setExercises }) => {
                 <tr>
                   <th style={styles.th}>Date ▼</th>
                   <th style={styles.th}>Exercise</th>
-                  <th style={styles.th}>Duration (min)</th>
-                  <th style={styles.th}>Actions</th>
+                  <th style={styles.th}>Duration (min) Completed</th>
+                  <th style={styles.th}>Duration (min) Goal</th>
                 </tr>
               </thead>
               <tbody>
-                {data.map((exercise, index) => (
+                {data.map((analytic, index) => (
                   <tr key={index} style={styles.tr}>
-                    <td style={styles.td}>{exercise[4]}</td>
-                    <td style={styles.td}>{exercise[2]}</td>
-                    <td style={styles.td}>{exercise[3]}</td>
-                    <td style={styles.td}>
-                      <button 
-                        onClick={() => handleDeleteExercise(exercise[0])}
-                        style={styles.deleteButton}
-                      >
-                        Delete
-                      </button>
-                    </td>
+                    <td style={styles.td}>{analytic[4]}</td>
+                    <td style={styles.td}>{analytic[2]}</td>
+                    <td style={styles.td}>{analytic[3]}</td>
+                    <td style={styles.td}>{analytic[8]}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p style={styles.placeholder}>No exercises logged yet. Add your first exercise above!</p>
+          <p style={styles.placeholder}>No exercises or goals logged yet for analytics. </p>
         )}
       </div>
     </div>
@@ -300,4 +217,4 @@ const styles = {
   },
 };
 
-export default Tracking;
+export default Analytics;
