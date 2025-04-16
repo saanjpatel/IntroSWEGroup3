@@ -45,6 +45,10 @@ const Profile = () => {
     navigate("/events");
   };
 
+  const handleReservedEvents = () => {
+    navigate("/reservations");
+  };
+
   const confirmDelete = async () => {
     setShowDeletePopup(false);
     try {
@@ -85,11 +89,14 @@ const Profile = () => {
           <button onClick={handleUpdatePassword} style={styles.navButton}>
             Update Password
           </button>
-          <button onClick={handleDeleteAccount} style={styles.deleteButton}>
-            Delete Account
-          </button>
           <button onClick={handleViewEvents} style={styles.navButton}>
             View Ticketmaster Events
+          </button>
+          <button onClick={handleReservedEvents} style={styles.navButton}>
+            Reserved Events
+          </button>
+          <button onClick={handleDeleteAccount} style={styles.deleteButton}>
+            Delete Account
           </button>
         </div>
       </div>
@@ -108,24 +115,22 @@ const Profile = () => {
       <div style={styles.actionsSection}>
         <h3 style={styles.sectionTitle}>Your Dashboard</h3>
         <div style={styles.actionButtons}>
-          <button 
-            onClick={() => navigate("/tracking")} 
+          <button
+            onClick={() => navigate("/tracking")}
             style={styles.primaryButton}
           >
             <FontAwesomeIcon icon={faChartLine} style={styles.buttonIcon} />
             <span>Tracking</span>
           </button>
-          
-          <button 
-            onClick={() => navigate("/goal")} 
+          <button
+            onClick={() => navigate("/goal")}
             style={styles.primaryButton}
           >
             <FontAwesomeIcon icon={faFlagCheckered} style={styles.buttonIcon} />
             <span>Goals</span>
           </button>
-          
-          <button 
-            onClick={() => navigate("/analytics")} 
+          <button
+            onClick={() => navigate("/analytics")}
             style={styles.primaryButton}
           >
             <FontAwesomeIcon icon={faChartColumn} style={styles.buttonIcon} />
@@ -166,7 +171,6 @@ const styles = {
   },
   header: {
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: "2rem",
   },
@@ -177,6 +181,8 @@ const styles = {
   navButtons: {
     display: "flex",
     gap: "1rem",
+    alignItems: "center",
+    marginLeft: "auto", // Pushes the group to the far right
   },
   navButton: {
     padding: "0.75rem 1.5rem",
@@ -264,11 +270,6 @@ const styles = {
     justifyContent: "center",
     gap: "0.5rem",
     minWidth: "150px",
-    ":hover": {
-      backgroundColor: "#12b886",
-      transform: "translateY(-3px)",
-      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-    },
   },
   buttonIcon: {
     fontSize: "1.8rem",
