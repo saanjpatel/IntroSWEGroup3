@@ -18,8 +18,8 @@ def get_db_connection():
     conn = psycopg2.connect(
         host='localhost',
         database='stayfit_db',
-        user='',
-        password='',
+        user='postgres',
+        password='Google232.',
         port='5432'
     )
     return conn
@@ -200,6 +200,26 @@ def tm_events():
     response = requests.get("https://app.ticketmaster.com/discovery/v2/events.json", params=params)
     data = response.json()
     return jsonify(data), response.status_code
+
+@app.route('/api/event-details/<event_id>', methods=['GET'])
+def get_event_details(event_id):
+    tm_api_key = "hAg0tYg9wKuYyPMhX1CdWd2ZAVKJuucA"
+    base_url = "https://app.ticketmaster.com/discovery/v2/events"
+    url = f"{base_url}/{event_id}.json"
+
+    params = {
+        "apikey": tm_api_key
+    }
+
+    try:
+        response = requests.get(url, params=params)
+        response.raise_for_status()  # This will raise an error for a bad response
+        event_data = response.json()
+        return jsonify(event_data), response.status_code
+    except requests.exceptions.HTTPError as http_err:
+        return jsonify({"error": f"HTTP error occurred: {http_err}"}), response.status_code
+    except Exception as err:
+        return jsonify({"error": f"An unexpected error occurred: {err}"}), 500
 
 @app.route('/addtracking', methods=['POST'])
 def addtracking():
