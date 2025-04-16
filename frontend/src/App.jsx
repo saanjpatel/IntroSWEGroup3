@@ -11,6 +11,8 @@ import Events from './components/Events';
 import OAuthAuthenticate from './components/OAuthAuthenticate';
 import Goal from "./components/Goal.jsx";
 import Analytics from "./components/Analytics.jsx";
+import EventDetail from "./components/EventDetail";  // New component for event details
+import Reservations from "./components/Reservations";  // New component for reservations
 
 function App() {
   const [exercises, setExercises] = useState(() => {
@@ -24,7 +26,7 @@ function App() {
     localStorage.setItem('exercises', JSON.stringify(exercises));
   }, [exercises]);
 
-const [goals, setGoals] = useState(() => {
+  const [goals, setGoals] = useState(() => {
     // Load from localStorage if available
     const saved = localStorage.getItem('goals');
     return saved ? JSON.parse(saved) : [];
@@ -34,7 +36,6 @@ const [goals, setGoals] = useState(() => {
   useState(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
-
 
   return (
     <Router>
@@ -47,6 +48,8 @@ const [goals, setGoals] = useState(() => {
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/oauth-callback" element={<OAuthAuthenticate />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/event-details/:event_id" element={<EventDetail />} />
+        <Route path="/reservations" element={<Reservations />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route
           path="/tracking"
