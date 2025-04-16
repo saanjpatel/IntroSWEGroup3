@@ -311,6 +311,24 @@ def deletegoal():
     except Exception as e:
         print("Database error:", str(e))
         return jsonify({'error': str(e)}), 500
+@app.route('/checkanalytics', methods=['POST', 'GET'])
+def checkanalytics():
+    print("check")
+    curr_email = request.get_json()
+    print(curr_email)
+    try:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM track JOIN goal ON track.username = goal.username and track.type = goal.type and track.date = goal.date WHERE track.username = %s', (curr_email,))
+        data = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        print("Analytics successful")
+        return jsonify(data)
+    except Exception as e:
+        print("Database error:", str(e))
+        return jsonify({'error': str(e)}), 500
 ############################################
 # (Optional) Catch-All Route for Serving React Production Build
 ############################################
