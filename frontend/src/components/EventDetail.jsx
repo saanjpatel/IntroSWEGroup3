@@ -3,16 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const EventDetail = () => {
-  // Extract the event_id from the URL parameters
   const { event_id } = useParams();
   const navigate = useNavigate();
 
-  // Local states for event details, loading status, and error
   const [eventDetails, setEventDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch event details on component mount
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
@@ -28,7 +25,6 @@ const EventDetail = () => {
     fetchEventDetails();
   }, [event_id]);
 
-  // Handle ticket reservation
   const handleReserveTicket = () => {
     const numberInput = window.prompt("Enter number of tickets to reserve:");
     const tickets = parseInt(numberInput);
@@ -37,13 +33,11 @@ const EventDetail = () => {
       return;
     }
 
-    // If available, retrieve a minimum price from the event details.
     let ticketPrice = null;
     if (eventDetails?.priceRanges && eventDetails.priceRanges.length > 0) {
       ticketPrice = eventDetails.priceRanges[0].min;
     }
 
-    // Build the reservation object
     const reservation = {
       eventId: eventDetails.id,
       eventName: eventDetails.name,
@@ -52,7 +46,6 @@ const EventDetail = () => {
       eventDate: eventDetails?.dates?.start?.localDate || "N/A"
     };
 
-    // Retrieve existing reservations from localStorage
     const storedReservations = JSON.parse(localStorage.getItem("reservations")) || [];
     storedReservations.push(reservation);
     localStorage.setItem("reservations", JSON.stringify(storedReservations));
@@ -66,7 +59,6 @@ const EventDetail = () => {
     return <p style={styles.error}>{error}</p>;
   }
 
-  // Extract useful info from eventDetails
   const eventName = eventDetails?.name || "Event Name Not Available";
   const eventDate = eventDetails?.dates?.start?.localDate || "N/A";
   const eventTime = eventDetails?.dates?.start?.localTime || "N/A";

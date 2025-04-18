@@ -3,22 +3,19 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Events = () => {
-  // States for events, errors, and search input.
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
-  const [searchKeyword, setSearchKeyword] = useState(""); // Keyword search input
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
   const navigate = useNavigate();
 
-  // Default parameters for the API call.
   const countryCode = "US";
   const radius = "";
   const unit = "miles";
   const size = "20";
 
-  // Function to fetch events with an optional keyword filter and page number.
   const fetchEvents = async (keywordParam = "", pageNum = 0) => {
     try {
       const response = await axios.get("http://127.0.0.1:5000/api/tm-events", {
@@ -32,7 +29,6 @@ const Events = () => {
         },
         withCredentials: false
       });
-      // If events data exists, update the events state.
       if (
         response.data &&
         response.data._embedded &&
@@ -40,7 +36,6 @@ const Events = () => {
       ) {
         setEvents(response.data._embedded.events);
         setError("");
-        // Update page info if available.
         if (response.data.page) {
           setCurrentPage(response.data.page.number);
           setTotalPages(response.data.page.totalPages);
@@ -61,24 +56,20 @@ const Events = () => {
     }
   };
 
-  // Initial fetch without any keyword filter.
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  // Handle the search form submission.
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchEvents(searchKeyword.trim(), 0);
   };
 
-  // Handle page change via pagination controls.
   const handlePageChange = (pageNum) => {
     setCurrentPage(pageNum);
     fetchEvents(searchKeyword.trim(), pageNum);
   };
 
-  // Render a dynamic range of page buttons.
   const renderPageButtons = () => {
     const maxButtons = 7;
     let start = Math.max(currentPage - Math.floor(maxButtons / 2), 0);
@@ -106,7 +97,6 @@ const Events = () => {
     return buttons;
   };
 
-  // Back button handler: navigate to Profile
   const handleBack = () => {
     navigate("/profile");
   };
@@ -124,7 +114,6 @@ const Events = () => {
         </div>
       </header>
 
-      {/* Search Form */}
       <div style={styles.searchContainer}>
         <form onSubmit={handleSearchSubmit} style={styles.searchForm}>
           <input

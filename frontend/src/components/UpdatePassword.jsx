@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "/src/assets/SFLogo.png"; // Make sure to add your logo file
+import logo from "/src/assets/SFLogo.png";
 
 const UpdatePassword = () => {
   const [email, setEmail] = useState("");
@@ -211,7 +211,7 @@ const styles = {
   },
   passwordInput: {
     padding: "0.9rem",
-    paddingRight: "px", // Space for eye button
+    paddingRight: "px",
     borderRadius: "8px",
     border: "1px solid #ced4da",
     fontSize: "1rem",

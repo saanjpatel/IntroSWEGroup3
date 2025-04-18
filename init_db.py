@@ -2,9 +2,9 @@ import psycopg2
 
 conn = psycopg2.connect(    
     host="localhost",
-    database="stayfit_db",
+    database="",
     user='postgres',
-    password='Google232.', port='5432')
+    password='Pandabear88!', port='5432')
 # add own user and password
 cur = conn.cursor()
 

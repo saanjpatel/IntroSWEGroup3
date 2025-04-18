@@ -75,7 +75,6 @@ const Register = () => {
 
   return (
     <div style={styles.container}>
-      {/* Logo in top left */}
       <img
         src={logo}
         alt="StayFit Logo"
@@ -83,7 +82,6 @@ const Register = () => {
         onClick={() => navigate("/")}
       />
 
-      {/* Main content */}
       <div style={styles.content}>
         <h1 style={styles.title}>StayFit</h1>
 
@@ -103,7 +101,6 @@ const Register = () => {
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                // Clear error when user starts typing
                 if (passwordError) setPasswordError("");
               }}
               style={styles.input}
