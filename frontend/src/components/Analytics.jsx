@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "../assets/SFLogo.png"; // Make sure to add your logo file
+import logo from "../assets/SFLogo.png";
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ const Analytics = () => {
 
   return (
     <div style={styles.container}>
-      {/* Logo in top left */}
       <img
         src={logo}
         alt="StayFit Logo"
@@ -33,14 +32,12 @@ const Analytics = () => {
         onClick={() => navigate("/")}
       />
 
-      {/* Navigation buttons */}
       <div style={styles.navButtons}>
         <button onClick={() => navigate("/profile")} style={styles.navButton}>
           ← Back to Profile
         </button>
       </div>
 
-      {/* Main content */}
       <div style={styles.content}>
         <h1 style={styles.title}>Fitness Analytics</h1>
 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "../assets/SFLogo.png"; // Adjust path to your logo file
+import logo from "../assets/SFLogo.png";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,7 +32,6 @@ const Login = () => {
 
   return (
     <div style={styles.container}>
-      {/* Logo in top left */}
       <img 
         src={logo} 
         alt="StayFit Logo" 
@@ -40,7 +39,6 @@ const Login = () => {
         onClick={() => navigate("/")}
       />
 
-      {/* Main content */}
       <div style={styles.content}>
         <h1 style={styles.title}>StayFit</h1>
         

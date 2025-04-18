@@ -11,28 +11,24 @@ import Events from './components/Events';
 import OAuthAuthenticate from './components/OAuthAuthenticate';
 import Goal from "./components/Goal.jsx";
 import Analytics from "./components/Analytics.jsx";
-import EventDetail from "./components/EventDetail";  // New component for event details
-import Reservations from "./components/Reservations";  // New component for reservations
+import EventDetail from "./components/EventDetail";
+import Reservations from "./components/Reservations";
 
 function App() {
   const [exercises, setExercises] = useState(() => {
-    // Load from localStorage if available
     const saved = localStorage.getItem('exercises');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Save to localStorage whenever exercises change
   useState(() => {
     localStorage.setItem('exercises', JSON.stringify(exercises));
   }, [exercises]);
 
   const [goals, setGoals] = useState(() => {
-    // Load from localStorage if available
     const saved = localStorage.getItem('goals');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Save to localStorage whenever goals change
   useState(() => {
     localStorage.setItem('goals', JSON.stringify(goals));
   }, [goals]);
@@ -44,7 +40,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/weather" element={<Weather />} />
         <Route path="/update-password" element={<UpdatePassword />} />
         <Route path="/oauth-callback" element={<OAuthAuthenticate />} />
         <Route path="/events" element={<Events />} />
