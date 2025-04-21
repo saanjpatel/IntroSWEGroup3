@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import logo from "../assets/SFLogo.png"; // Make sure to add your logo file
+import logo from "../assets/SFLogo.png";
 
 const Goal = ({ goals, setGoals }) => {
   const navigate = useNavigate();
@@ -40,7 +40,6 @@ const Goal = ({ goals, setGoals }) => {
         goalTime,
         date
       });
-      // Refresh data after adding
       const newData = await fetch("http://127.0.0.1:5000/checkgoal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,7 +60,6 @@ const Goal = ({ goals, setGoals }) => {
       await axios.delete("http://127.0.0.1:5000/deletegoal", {
         data: {id: id}
       });
-      // Refresh data after deleting
       const newData = await fetch("http://127.0.0.1:5000/checkgoal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -75,7 +73,6 @@ const Goal = ({ goals, setGoals }) => {
 
   return (
     <div style={styles.container}>
-      {/* Logo in top left */}
       <img 
         src={logo} 
         alt="StayFit Logo" 
@@ -83,14 +80,12 @@ const Goal = ({ goals, setGoals }) => {
         onClick={() => navigate("/")}
       />
 
-      {/* Navigation buttons */}
       <div style={styles.navButtons}>
         <button onClick={() => navigate("/profile")} style={styles.navButton}>
           ← Back to Profile
         </button>
       </div>
 
-      {/* Main content */}
       <div style={styles.content}>
         <h1 style={styles.title}>Fitness Goals</h1>
         
