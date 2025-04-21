@@ -4,7 +4,6 @@ import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
 import Profile from './components/Profile';
-import Weather from './components/Weather';
 import Tracking from './components/Tracking';
 import UpdatePassword from './components/UpdatePassword.jsx';
 import Events from './components/Events';
