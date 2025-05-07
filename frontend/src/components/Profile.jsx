@@ -74,7 +74,6 @@ const Profile = () => {
 
   return (
     <div style={styles.container}>
-      {/* Header with logo and navigation buttons */}
       <div style={styles.header}>
         <img
           src={logo}
@@ -101,7 +100,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Profile Info Section */}
       <div style={styles.profileInfoSection}>
         <div style={styles.profilePicCircle}>
           <span style={styles.profilePicText}>Profile Pic</span>
@@ -111,7 +109,6 @@ const Profile = () => {
         </h2>
       </div>
 
-      {/* Action Buttons Section */}
       <div style={styles.actionsSection}>
         <h3 style={styles.sectionTitle}>Your Dashboard</h3>
         <div style={styles.actionButtons}>
@@ -139,7 +136,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Delete Account Confirmation Popup */}
       {showDeletePopup && (
         <div style={styles.popup}>
           <div style={styles.popupContent}>
@@ -182,7 +178,7 @@ const styles = {
     display: "flex",
     gap: "1rem",
     alignItems: "center",
-    marginLeft: "auto", // Pushes the group to the far right
+    marginLeft: "auto",
   },
   navButton: {
     padding: "0.75rem 1.5rem",

@@ -5,7 +5,6 @@ const Reservations = () => {
   const [reservations, setReservations] = useState([]);
   const navigate = useNavigate();
 
-  // Load reservations from localStorage on mount
   useEffect(() => {
     const storedReservations = JSON.parse(localStorage.getItem("reservations")) || [];
     setReservations(storedReservations);
